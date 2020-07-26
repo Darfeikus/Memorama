@@ -1,4 +1,4 @@
-# Memoria
+# Memorama
 
 Objetivo: Ejercicio de programación para mostrar su comprensión de algunos de
 los algoritmos de administración de memoria vistos en clase
