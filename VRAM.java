@@ -17,14 +17,8 @@ public class VRAM {
     //Inicializa todo el array en -1, siendo este número equivalente a vacio
     private void initArray() { 
         vram = new int [MEMORY_LENGTH];
-        for (int i = 0; i < MEMORY_LENGTH/4; i++)
+        for (int i = 0; i < MEMORY_LENGTH; i++)
             vram[i] = -1;
-        for (int i = MEMORY_LENGTH/4; i < (MEMORY_LENGTH*2)/4; i++)
-            vram[i] = 2;
-        for (int i = (MEMORY_LENGTH*2)/4; i < (MEMORY_LENGTH*3)/4; i++)
-            vram[i] = -1;
-        for (int i = (MEMORY_LENGTH*3)/4; i < (MEMORY_LENGTH*4)/4; i++)
-            vram[i] = 2;
     }
     
     //Se desaloja el proceso de la memoria, se itera en cada pagina y si ahi esta el proceso, se limpia la página
@@ -59,7 +53,6 @@ public class VRAM {
     //Se itera sobre el arreglo para ver los espacios disponibles donde agregar las páginas
     private void storeInMemory(int processId, int numberOfPages, int size) {
         for (int i = 0; i < MEMORY_LENGTH && numberOfPages != 0; i+=PAGE_SIZE) {
-            System.out.println("Me itere" + numberOfPages);
             if (vram[i] == -1) {
                 fillingMemory(processId, size, numberOfPages, i);
                 freePages--;
