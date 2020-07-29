@@ -39,18 +39,13 @@ public class VRAM {
     }
 
     //Se agrega un proceso a la memoria , primero se checa si hay suficientes espacios, si hay entonces se guarda en memoria
-    public List<int[]> addProcess(int processId, int size) { 
+    public List<int[]> addProcess(int processId, int size) throws Exception{ 
         List<int[]> indexOfPages = new ArrayList<int[]>();
-        try {
-            int numberOfPages = (int)(Math.ceil((double)size/PAGE_SIZE));
-            if (numberOfPages > freePages) {
-                //throw new MoreThanFreeMemoryException("Se pide mas memoria de la que hay disponible");
-            }
-            indexOfPages = storeInMemory(processId, numberOfPages, size, indexOfPages);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return indexOfPages;
+        int numberOfPages = (int)(Math.ceil((double)size/PAGE_SIZE));
+        if (numberOfPages > freePages) {
+            throw new MoreThanFreeMemoryException("Se pide mas memoria de la que hay disponible");
         }
+        indexOfPages = storeInMemory(processId, numberOfPages, size, indexOfPages);
         return indexOfPages;
     }
 
