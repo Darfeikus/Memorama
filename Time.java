@@ -19,20 +19,24 @@ public class Time{
 
 	void addSeconds(int sec){
 		seconds += sec;
+		simplifyTime();
 	}
 
 	//Overwriting for different argument type
 	void addSeconds(float sec){
 		this.miliseconds += (sec % 1) * 1000;
 		this.seconds += sec - (sec % 1);
+		simplifyTime();
 	}
 
 	void addHour(int hr){
 		this.hours += hr;
+		simplifyTime();
 	}
 
 	void addMinute(int min){
 		this.minutes += min;
+		simplifyTime();
 	}
 
 	Time substractTimes(Time minuend, Time subtrahend){
