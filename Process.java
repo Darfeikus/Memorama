@@ -8,15 +8,19 @@ public class Process {
     Time turnaround;
 
     public Process(int id, Time startTime, List<int[]> pageList) {
-        // this.id = Simulation.createProcess()
-        // this.pageList = Viene de RAM.addProcess que llama simulacion
-        // this.startTime = viene de Simulacion
-
+        this.id = id;
+        this.startTime = startTime;
+        this.pageList = pageList;
     }
 
-    // Genera Page Fault
+    // Called by RAM, moves processes from RAM to VRAM, and vice versa
     void changeProcess(int oldAddress, int newAddress) {
-        // if 0 -> 1; else 1 -> 0
+        int i = pageList.indexOf(oldAddress);
+
+        if (pageList.get(i)[0] == 0)
+            pageList.set(i, new int[] { 1, newAddress });
+        else
+            pageList.set(i, new int[] { 0, newAddress });
     }
 
     void endProcess(Time endTime) {
