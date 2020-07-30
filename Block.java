@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 //Class used to encapsulate information about each block of processes
