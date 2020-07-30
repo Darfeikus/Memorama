@@ -92,7 +92,7 @@ public class RAM {
 
                 amountOfPagesToFill--;
                 FREE_PAGES--;
-                time.add(1);
+                time.addSeconds(1);
             }
         }
         return addresses;
@@ -126,7 +126,7 @@ public class RAM {
 
             Arrays.fill(RAM, indexes[i], indexes[i] + offset - 1, -1);
 
-            time.add(1);
+            time.addSeconds(1);
 
             FREE_PAGES++;
 
