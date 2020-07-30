@@ -3,3 +3,4 @@ main.java
 *.pdf
 *.class
 Time.java
+.gitignore
