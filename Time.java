@@ -77,6 +77,10 @@ public class Time {
 		return this.miliseconds;
 	}
 
+	void print(){
+		System.out.println(hours + "h: " + minutes + "m: " + seconds + "s: " + miliseconds + "ms");
+	}
+
 	Time getTime() {
 		return this;
 	}
