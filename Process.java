@@ -1,6 +1,5 @@
 
 /* Author: Gerardo Granados Aldaz */
-
 import java.util.*;
 
 public class Process {
@@ -12,10 +11,6 @@ public class Process {
     private Time endTime;
     private Time turnaround;
 
-    /*
-        Constructor of class Process
-    */
-
     public Process(int id, int size, Time startTime, List<int[]> pageList) {
         this.id = id;
         this.size = size;
@@ -23,57 +18,20 @@ public class Process {
         this.pageList = pageList;
     }
 
-    /*
-        Called by RAM, moves processes from RAM to VRAM, and vice versa
-    */
+    // Called by RAM, moves processes from RAM to VRAM, and vice versa
+    void changeProcess(int oldAddress, int newAddress) {
+        int i = pageList.indexOf(new int[] { 0, oldAddress }) == -1 ? pageList.indexOf(new int[] { 1, oldAddress })
+                : pageList.indexOf(new int[] { 0, oldAddress });
 
-    public void changeProcess(int oldAddress, int newAddress) {
-        int i = searchPageWithAddress(oldAddress);
         if (pageList.get(i)[0] == 0)
             pageList.set(i, new int[] { 1, newAddress });
         else
             pageList.set(i, new int[] { 0, newAddress });
     }
 
-    /*
-        search for the index of specific address
-    */
-
-    private int searchPageWithAddress(int address){
-        for(int i = 0; i < pageList.size(); i++){
-            if (pageList.get(i)[1] == address) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /*
-        ends process and calculates turnaround time
-    */
-
-    public void endProcess(Time endTime) {
+    void endProcess(Time endTime) {
         this.endTime = endTime;
         this.turnaround = Time.substractTimes(endTime, startTime);
     }
 
-    /*
-        returns Id of the process
-    */
-
-    public int getId(){
-        return this.id;
-    }
-
-    /*
-        Print the addresses of the process
-    */
-
-    public void printAddresses(){
-        System.out.printf("\nProcess %d address list\n",id);
-        for(int[]x : pageList){
-            System.out.printf("[%d][%d]\n",x[0],x[1]);
-        }
-        System.out.println();
-    }
 }

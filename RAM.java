@@ -42,10 +42,10 @@ public class RAM {
     }
 
     /*
-        Add new process to RAM, allocate and return in which pages was it allocated
-    */
+     * Add new process to RAM, allocate and return in which pages was it allocated
+     */
 
-    public void addProcess(int processId, int size, VRAM vram, Time time) throws Exception {
+    public List<int[]> addProcess(int processId, int size, VRAM vram, Time time) throws Exception {
 
         List<int[]> addresses = new ArrayList<>();
 
@@ -95,19 +95,10 @@ public class RAM {
                 time.addSeconds(1);
             }
         }
-        Process newProcess = new Process(processId, size, time, addresses);
-        PROCESS_LIST.add(newProcess);
-        
+        return addresses;
     }
 
-    /*
-        Frees space in RAM by moving it to the instance of VRAM, this is where it uses 
-        the algorithms for paging
-    */
-
-    private void freeSpace(int amountOfPagesToFree, VRAM vram, Time time) throws Exception {
-
-        //Gets the indexes of where to store the process in RAM
+    public void freeSpace(int amountOfPagesToFree, VRAM vram, Time time) throws Exception {
 
         int[] indexes = FIFO(amountOfPagesToFree);
         // int[] indexes = LRU(amountOfPagesToFree);
@@ -127,13 +118,14 @@ public class RAM {
             System.out.printf("Requesting to move process %d in page %d of size %d\n", currentId, indexes[i],
                     sizeOfProcess);
             
-            //List of addresses from the process that was moved to VRAM 
-            
             List<int[]> addresses = vram.addProcess(currentId, sizeOfProcess);
 
-            updateList(currentId, indexes[i], addresses);
-            
-            Arrays.fill(RAM, indexes[i], indexes[i] + offset, -1);
+            for (int[] x : addresses) {
+                System.out.println("Address " + x[0] + " " + x[1]);
+            }
+
+            Arrays.fill(RAM, indexes[i], indexes[i] + offset - 1, -1);
+
             time.addSeconds(1);
 
             FREE_PAGES++;
@@ -141,35 +133,7 @@ public class RAM {
         }
     }
 
-    /*
-        Updates which addresses where moved from VRAM to RAM in the process processList
-    */
-
-    private void updateList(int processId, int oldIndex, List<int[]> addresses){
-        Process process = processAtIndex(processId);
-
-        for (int[] x : addresses) {
-            process.changeProcess(oldIndex, x[1]);
-        }
-    }
-
-     /*
-        Returns Process in PROCESS_LIST from processID
-    */
-    
-    private Process processAtIndex(int processId){
-        for (Process x : PROCESS_LIST) {
-            if(x.getId() == processId)
-                return x;
-        }
-        return null;
-    }
-
-    /*
-        algorithm that returns an array of indexes of pages based on FIFO
-    */
-
-    private int[] FIFO(int amountOfPagesToFree) {
+    public int[] FIFO(int amountOfPagesToFree) {
 
         int[] indexes = new int[amountOfPagesToFree];
 
@@ -185,13 +149,9 @@ public class RAM {
         return this.NUMBER_OF_PAGES;
     }
 
-    /*
-        Print RAM by pages
-    */
-     
+    // Print RAM by pages
 
     public void print() {
-        System.out.printf("RAM:\n");
         for (int i = 0; i < RAM.length; i++) {
             if (i % PAGE_SIZE == 0) {
                 System.out.println();
@@ -200,20 +160,6 @@ public class RAM {
         }
         System.out.println("\n");
     }
-
-    /*
-        Prints all processes address list
-    */
-
-    public void printProcessesAddressList(){
-        for(Process x:PROCESS_LIST){
-            x.printAddresses();
-        }
-    }
-
-    /*
-        Prints FIFO stack
-    */
 
     public void printFIFO() {
         System.out.println(FIFO_STACK);
