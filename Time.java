@@ -1,7 +1,4 @@
 /* Author: Pablo Vera Teran */
-
-import java.util.*;
-
 public class Time {
 
 	private int hours;

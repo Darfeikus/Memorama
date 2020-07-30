@@ -42,12 +42,13 @@ public class RAM {
     }
 
     /*
-        Add new process to RAM, allocate and return in which pages was it allocated
+        Add new process to RAM, allocate and return amount of swaps in the operation
     */
 
-    public void addProcess(int processId, int size, VRAM vram, Time time) throws Exception {
+    public int[] addProcess(int processId, int size, VRAM vram, Time time, int method) throws Exception {
 
         List<int[]> addresses = new ArrayList<>();
+        int[] swaps = new int[2];
 
         if (IDS.indexOf(processId) != -1) {
             throw new RamException("ID already exists");
@@ -68,7 +69,7 @@ public class RAM {
 
         if (FREE_PAGES < amountOfPagesToFill) {
             System.out.printf("Not enough pages, rellocating %d pages\n", amountOfPagesToFill - FREE_PAGES);
-            freeSpace(amountOfPagesToFill - FREE_PAGES, vram, time);
+            freeSpace(amountOfPagesToFill - FREE_PAGES, vram, time, swaps, method);
         }
 
         // Fill RAM
@@ -86,18 +87,22 @@ public class RAM {
 
                 addresses.add(new int[] { 0, i });
 
-                // Add page index to FIFO_STACK
+                // Add page index to FIFO_STACK and LRU
 
                 FIFO_STACK.add(i);
+                LRU_STACK.add(i);
 
                 amountOfPagesToFill--;
                 FREE_PAGES--;
+                
+                //Swap in RAM
                 time.addSeconds(1);
+                swaps[0]++;
             }
         }
         Process newProcess = new Process(processId, size, time, addresses);
         PROCESS_LIST.add(newProcess);
-        
+        return swaps;
     }
 
     /*
@@ -105,12 +110,17 @@ public class RAM {
         the algorithms for paging
     */
 
-    private void freeSpace(int amountOfPagesToFree, VRAM vram, Time time) throws Exception {
+    private void freeSpace(int amountOfPagesToFree, VRAM vram, Time time, int[] swaps, int method) throws Exception {
 
         //Gets the indexes of where to store the process in RAM
-
-        int[] indexes = FIFO(amountOfPagesToFree);
-        // int[] indexes = LRU(amountOfPagesToFree);
+        int[] indexes;
+        
+        if(method == 1){
+            indexes = LRU(amountOfPagesToFree);
+        }
+        else{
+            indexes = FIFO(amountOfPagesToFree);
+        }
 
         System.out.println("Indexes of pages to dealloc " + Arrays.toString(indexes));
         int offset, sizeOfProcess, currentId;
@@ -134,7 +144,10 @@ public class RAM {
             updateList(currentId, indexes[i], addresses);
             
             Arrays.fill(RAM, indexes[i], indexes[i] + offset, -1);
+            
+            //Swap in VRAM
             time.addSeconds(1);
+            swaps[1]++; 
 
             FREE_PAGES++;
 
@@ -181,6 +194,18 @@ public class RAM {
         return indexes;
     }
 
+    private int[] LRU(int amountOfPagesToFree) {
+
+        int[] indexes = new int[amountOfPagesToFree];
+
+        for (int i = 0; i < indexes.length; i++) {
+            indexes[i] = FIFO_STACK.get(0);
+            LRU_STACK.remove(0);
+        }
+
+        return indexes;
+    }
+
     public int getNUMBER_OF_PAGES() {
         return this.NUMBER_OF_PAGES;
     }
@@ -189,7 +214,6 @@ public class RAM {
         Print RAM by pages
     */
      
-
     public void print() {
         System.out.printf("RAM:\n");
         for (int i = 0; i < RAM.length; i++) {
