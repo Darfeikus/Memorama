@@ -1,15 +1,19 @@
+
 /* Author: Gerardo Granados Aldaz */
 import java.util.*;
 
 public class Process {
-    int id; // unique id for process
-    List<int[]> pageList = new ArrayList<>(); // list of int array of size 2, [0] 0 is RAM, 1 is VRAM, [1] is address.
-    Time startTime;
-    Time endTime;
-    Time turnaround;
+    private int id; // unique id for process
+    private int size;
+    private List<int[]> pageList = new ArrayList<>(); // list of int array of size 2, [0] 0 is RAM, 1 is VRAM, [1] is
+                                                      // address.
+    private Time startTime;
+    private Time endTime;
+    private Time turnaround;
 
-    public Process(int id, Time startTime, List<int[]> pageList) {
+    public Process(int id, int size, Time startTime, List<int[]> pageList) {
         this.id = id;
+        this.size = size;
         this.startTime = startTime;
         this.pageList = pageList;
     }
