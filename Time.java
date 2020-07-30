@@ -2,44 +2,44 @@
 
 import java.util.*;
 
-public class Time{
+public class Time {
 
 	private int hours;
 	private int minutes;
 	private int seconds;
 	private int miliseconds;
 
-	/*Constructor of class Time*/
-	public Time(){
+	/* Constructor of class Time */
+	public Time() {
 		this.hours = 0;
 		this.minutes = 0;
 		this.seconds = 0;
 		this.miliseconds = 0;
 	}
 
-	void addSeconds(int sec){
+	void addSeconds(int sec) {
 		seconds += sec;
 		simplifyTime();
 	}
 
-	//Overwriting for different argument type
-	void addSeconds(float sec){
+	// Overwriting for different argument type
+	void addSeconds(float sec) {
 		this.miliseconds += (sec % 1) * 1000;
 		this.seconds += sec - (sec % 1);
 		simplifyTime();
 	}
 
-	void addHour(int hr){
+	void addHour(int hr) {
 		this.hours += hr;
 		simplifyTime();
 	}
 
-	void addMinute(int min){
+	void addMinute(int min) {
 		this.minutes += min;
 		simplifyTime();
 	}
 
-	Time substractTimes(Time minuend, Time subtrahend){
+	static Time substractTimes(Time minuend, Time subtrahend) {
 		Time difference = new Time();
 		difference.hours = minuend.hours - subtrahend.hours;
 		difference.minutes = minuend.minutes - subtrahend.minutes;
@@ -49,36 +49,39 @@ public class Time{
 		return difference;
 	}
 
-	void simplifyTime(){
-		if(this.miliseconds>=1000){
-			this.seconds += (this.miliseconds - this.miliseconds%1000)/1000;
-			this.miliseconds = this.miliseconds%1000;
+	void simplifyTime() {
+		if (this.miliseconds >= 1000) {
+			this.seconds += (this.miliseconds - this.miliseconds % 1000) / 1000;
+			this.miliseconds = this.miliseconds % 1000;
 		}
-		if(this.seconds>=60){
-			this.minutes += (this.seconds - this.seconds%60)/60;
-			this.seconds = this.seconds%60;
+		if (this.seconds >= 60) {
+			this.minutes += (this.seconds - this.seconds % 60) / 60;
+			this.seconds = this.seconds % 60;
 		}
-		if(this.minutes>=60){
-			this.hours += (this.minutes - this.minutes%60)/60;
-			this.minutes = this.minutes%60;
+		if (this.minutes >= 60) {
+			this.hours += (this.minutes - this.minutes % 60) / 60;
+			this.minutes = this.minutes % 60;
 		}
 	}
 
-	int getHours(){			return this.hours;
+	int getHours() {
+		return this.hours;
 	}
 
-	int getMinutes(){		return this.minutes;
+	int getMinutes() {
+		return this.minutes;
 	}
 
-	int getSeconds(){		return this.seconds;
+	int getSeconds() {
+		return this.seconds;
 	}
 
-	int getMiliseconds(){	return this.miliseconds;
+	int getMiliseconds() {
+		return this.miliseconds;
 	}
 
-	Time getTime(){			return this;
+	Time getTime() {
+		return this;
 	}
-
-
 
 }

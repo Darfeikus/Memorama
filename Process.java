@@ -1,3 +1,4 @@
+/* Author: Gerardo Granados Aldaz */
 import java.util.*;
 
 public class Process {
@@ -15,7 +16,8 @@ public class Process {
 
     // Called by RAM, moves processes from RAM to VRAM, and vice versa
     void changeProcess(int oldAddress, int newAddress) {
-        int i = pageList.indexOf(oldAddress);
+        int i = pageList.indexOf(new int[] { 0, oldAddress }) == -1 ? pageList.indexOf(new int[] { 1, oldAddress })
+                : pageList.indexOf(new int[] { 0, oldAddress });
 
         if (pageList.get(i)[0] == 0)
             pageList.set(i, new int[] { 1, newAddress });
@@ -25,7 +27,7 @@ public class Process {
 
     void endProcess(Time endTime) {
         this.endTime = endTime;
-        // turnaround = Time.substractTimes(endTime, startTime);
+        this.turnaround = Time.substractTimes(endTime, startTime);
     }
 
 }
