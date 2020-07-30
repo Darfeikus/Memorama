@@ -18,14 +18,20 @@ public class VRAM {
         initArray();
     }
 
-    //The whole array has -1, it means that it is completely empty
+    /*
+        The whole array has -1, it means that it is completely empty
+    */
+
     private void initArray() { 
         vram = new int [MEMORY_LENGTH];
         for (int i = 0; i < MEMORY_LENGTH; i++)
             vram[i] = -1;
     }
     
-    //It removes the process from the memory, it iterates over each page, if the process id is found it is removed
+    /*
+        It removes the process from the memory, it iterates over each page, if the process id is found it is removed
+    */
+
     public boolean removeProcessFromMemory(int id) { 
         boolean foundIt = false;
         for (int i = 0; i < MEMORY_LENGTH; i+=PAGE_SIZE) {
@@ -39,7 +45,11 @@ public class VRAM {
         return foundIt;
     }
 
-    //A process is added to memory, first check if there are enough spaces, if there is then it is stored in memory
+    /* 
+        A process is added to memory, first check if there are enough spaces, if there is then it is stored in memory
+        returns a list with the addresses of where the process was stored
+    */
+
     public List<int[]> addProcess(int processId, int size) throws Exception{ 
         List<int[]> indexOfPages = new ArrayList<int[]>();
         int numberOfPages = (int)(Math.ceil((double)size/PAGE_SIZE));
@@ -50,7 +60,11 @@ public class VRAM {
         return indexOfPages;
     }
 
-    //Iterate over the arrangement to see the available spaces where to add the pages
+    /*
+        Iterate over the arrangement to see the available spaces where to add the pages
+        returns a list with the addresses of where the process was stored
+    */
+
     private List<int[]> storeInMemory(int processId, int numberOfPages, int size, List<int[]> indexOfPages) {
         for (int i = 0; i < MEMORY_LENGTH && numberOfPages != 0; i+=PAGE_SIZE) {
             if (vram[i] == -1) {
@@ -63,7 +77,10 @@ public class VRAM {
         return indexOfPages;
     }
 
-    //Memory is full, if the space you want to add is not multiple of PAGE_SIZE, then in the last iteration just the space is saved
+    /*
+        Memory is full, if the space you want to add is not multiple of PAGE_SIZE, then in the last iteration just the space is saved
+    */
+
     private void fillingMemory(int processId, int size, int numberOfPages, int indexOfPage) {
         int remainingSpace = size%PAGE_SIZE;
         if(numberOfPages == 1 && remainingSpace != 0){
@@ -75,7 +92,10 @@ public class VRAM {
         }
     }
 
-    //It returns the size of a process that is gonna be moved to ram, then it cleans memory
+    /*
+        It returns the size of a process that is gonna be moved to ram, then it cleans memory
+    */
+    
     public int movePageToRam(int processId) {
         int sizeOfProcess = countSpace(processId);
         this.removeProcessFromMemory(processId);
@@ -83,7 +103,10 @@ public class VRAM {
         
     }
 
-    //Returns the size of certain process
+    /*
+        Returns the size of certain process
+    */
+
     private int countSpace(int processId) {
         int sizeOfProcess = 0;
         for (int i = 0; i < MEMORY_LENGTH; i++) 
@@ -92,9 +115,23 @@ public class VRAM {
         return sizeOfProcess;
     }
 
-    //Returns the number of free pages
+    /*
+        Returns the number of free pages
+    */ 
+
     public int getFreePages() {
         return this.freePages;
+    }
+
+    public void print() {
+        System.out.printf("VRAM:\n");
+        for (int i = 0; i < vram.length; i++) {
+            if (i % PAGE_SIZE == 0) {
+                System.out.println();
+            }
+            System.out.printf("[%4d]\t", vram[i]);
+        }
+        System.out.println("\n");
     }
 
 }
