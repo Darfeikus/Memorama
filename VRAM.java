@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
 
+//Class that emulates a virtual memory
 public class VRAM {
-    private final int PAGE_SIZE ; //Tamaño de la página
-    private final int MEMORY_LENGTH; //Se declara la longitud de la memoria virtual
-    private final int NUMBER_OF_PAGES; //Es el número de páginas totales
+    private final int PAGE_SIZE ; //Size of the page
+    private final int MEMORY_LENGTH; //It is declared the size of the memory
+    private final int NUMBER_OF_PAGES; //The number of pages that the memory has, it depens on the page size 
     
-    private int[] vram; //Se crea el arreglo
+    private int[] vram; //The virtual memory
     private int freePages;
 
     public VRAM(int memorySize, int pageSize) {
@@ -17,14 +18,14 @@ public class VRAM {
         initArray();
     }
 
-    //Inicializa todo el array en -1, siendo este número equivalente a vacio
+    //The whole array has -1, it means that it is completely empty
     private void initArray() { 
         vram = new int [MEMORY_LENGTH];
         for (int i = 0; i < MEMORY_LENGTH; i++)
             vram[i] = -1;
     }
     
-    //Se desaloja el proceso de la memoria, se itera en cada pagina y si ahi esta el proceso, se limpia la página
+    //It removes the process from the memory, it iterates over each page, if the process id is found it is removed
     public boolean removeProcessFromMemory(int id) { 
         boolean foundIt = false;
         for (int i = 0; i < MEMORY_LENGTH; i+=PAGE_SIZE) {
@@ -38,7 +39,7 @@ public class VRAM {
         return foundIt;
     }
 
-    //Se agrega un proceso a la memoria , primero se checa si hay suficientes espacios, si hay entonces se guarda en memoria
+    //A process is added to memory, first check if there are enough spaces, if there is then it is stored in memory
     public List<int[]> addProcess(int processId, int size) throws Exception{ 
         List<int[]> indexOfPages = new ArrayList<int[]>();
         int numberOfPages = (int)(Math.ceil((double)size/PAGE_SIZE));
@@ -49,7 +50,7 @@ public class VRAM {
         return indexOfPages;
     }
 
-    //Se itera sobre el arreglo para ver los espacios disponibles donde agregar las páginas
+    //Iterate over the arrangement to see the available spaces where to add the pages
     private List<int[]> storeInMemory(int processId, int numberOfPages, int size, List<int[]> indexOfPages) {
         for (int i = 0; i < MEMORY_LENGTH && numberOfPages != 0; i+=PAGE_SIZE) {
             if (vram[i] == -1) {
@@ -62,7 +63,7 @@ public class VRAM {
         return indexOfPages;
     }
 
-    //Se llena la memoria, si el espacio que se desea agregar no es multiplo de PAGE_SIZE, entonces en la ultima iteración se guarda el espacio justo
+    //Memory is full, if the space you want to add is not multiple of PAGE_SIZE, then in the last iteration just the space is saved
     private void fillingMemory(int processId, int size, int numberOfPages, int indexOfPage) {
         int remainingSpace = size%PAGE_SIZE;
         if(numberOfPages == 1 && remainingSpace != 0){
@@ -74,7 +75,7 @@ public class VRAM {
         }
     }
 
-    //Se envia la cantidad total de datos que hay que mover a la RAM y se desalojan las páginas que ya no se usarán
+    //It returns the size of a process that is gonna be moved to ram, then it cleans memory
     public int movePageToRam(int processId) {
         int sizeOfProcess = countSpace(processId);
         this.removeProcessFromMemory(processId);
@@ -82,7 +83,7 @@ public class VRAM {
         
     }
 
-    //Cuenta el tamaño de un proceso
+    //Returns the size of certain process
     private int countSpace(int processId) {
         int sizeOfProcess = 0;
         for (int i = 0; i < MEMORY_LENGTH; i++) 
@@ -91,38 +92,9 @@ public class VRAM {
         return sizeOfProcess;
     }
 
-    //Regresa el numero de paginas disponibles en la memoria
+    //Returns the number of free pages
     public int getFreePages() {
         return this.freePages;
     }
-
-    //Metodos de prueba (eliminar al final)
-    /* public static void main(String[] args) {
-        VRAM v = new VRAM(16,4);
-        System.out.println(v.PAGE_SIZE + " " + v.MEMORY_LENGTH + " " + v.NUMBER_OF_PAGES);
-        printArray(v);
-        List<int[]> arr = v.addProcess(3, 6);
-        print(arr);
-        printArray(v);
-        v.removeProcessFromMemory(2);
-        printArray(v);
-        System.out.println(v.movePageToRam(3));
-        printArray(v);
-        
-    }
-
-    private static void printArray(VRAM v) {
-        for(int i = 0; i < v.MEMORY_LENGTH; i++){
-            System.out.print(" " + v.vram[i]);
-        }
-        System.out.println("\n");
-    }
-
-    public static void print(List<int[]> list){
-        for(int[] x:list){
-            System.out.println(x[0] + " " + x[1]);
-        }
-        System.out.println();
-    } */
 
 }
