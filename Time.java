@@ -20,7 +20,7 @@ public class Time {
 	}
 
 	// Overwriting for different argument type
-	void addSeconds(float sec) {
+	void addSeconds(double sec) {
 		this.miliseconds += (sec % 1) * 1000;
 		this.seconds += sec - (sec % 1);
 		simplifyTime();

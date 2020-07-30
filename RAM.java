@@ -7,6 +7,10 @@ public class RAM {
     private int PAGE_SIZE;
     private int SIZE;
     private int NUMBER_OF_PAGES;
+    private int PAGE_FAULTS=0;
+
+    private double timeOfSwap;
+    private double timeOfAccess;
 
     private int[] RAM;
     private int FREE_PAGES;
@@ -19,7 +23,7 @@ public class RAM {
 
     /* Constructor of class RAM */
 
-    public RAM(int size, int PAGE_SIZE) throws Exception {
+    public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess) throws Exception {
 
         boolean powersOfTwo = size > 0 && ((size & (size - 1))) == 0 && PAGE_SIZE > 0
                 && ((PAGE_SIZE & (PAGE_SIZE - 1))) == 0;
@@ -37,6 +41,8 @@ public class RAM {
         this.NUMBER_OF_PAGES = size / PAGE_SIZE;
         this.FREE_PAGES = NUMBER_OF_PAGES;
         this.RAM = new int[size];
+        this.timeOfSwap = timeOfSwap;
+        this.timeOfAccess = timeOfAccess;
 
         Arrays.fill(RAM, -1);
     }
@@ -49,6 +55,7 @@ public class RAM {
 
         List<int[]> addresses = new ArrayList<>();
         int[] swaps = new int[2];
+        int page = 0;
 
         if (IDS.indexOf(processId) != -1) {
             throw new RamException("ID already exists");
@@ -85,7 +92,8 @@ public class RAM {
 
                 // Add page index to list
 
-                addresses.add(new int[] { 0, i });
+                addresses.add(new int[] { 0, i ,page});
+                page+=PAGE_SIZE;
 
                 // Add page index to FIFO_STACK and LRU
 
@@ -96,7 +104,7 @@ public class RAM {
                 FREE_PAGES--;
                 
                 //Swap in RAM
-                time.addSeconds(1);
+                time.addSeconds(timeOfSwap);
                 swaps[0]++;
             }
         }
@@ -116,10 +124,10 @@ public class RAM {
         int[] indexes;
 
         if(method == 1){
-            indexes = LRU(amountOfPagesToFree);
+            indexes = LRUStack(amountOfPagesToFree);
         }
         else{
-            indexes = FIFO(amountOfPagesToFree);
+            indexes = FIFOStack(amountOfPagesToFree);
         }
 
         System.out.println("Indexes of pages to dealloc " + Arrays.toString(indexes));
@@ -146,7 +154,7 @@ public class RAM {
             Arrays.fill(RAM, indexes[i], indexes[i] + offset, -1);
             
             //Swap in VRAM
-            time.addSeconds(1);
+            time.addSeconds(timeOfSwap);
             swaps[1]++; 
 
             FREE_PAGES++;
@@ -158,9 +166,9 @@ public class RAM {
         Cleans a process from both RAM and VRAM and returns the amount of swap outs
     */
 
-    public int cleanProcess(int processID, VRAM vram, Time time) throws Exception{
+    public int cleanProcess(int processId, VRAM vram, Time time) throws Exception{
         int swaps = 0;
-        Process process = getProcess(processID);
+        Process process = getProcess(processId);
 
         if(process == null){
             throw new Exception("Process not found in memory");
@@ -172,9 +180,9 @@ public class RAM {
 
         //RemoveFromVram
 
-        vram.removeProcessFromMemory(processID);
-        removeProcessFromMemory(processID);
-        time.addSeconds(swaps);
+        vram.removeProcessFromMemory(processId);
+        removeProcessFromMemory(processId);
+        time.addSeconds(timeOfSwap*swaps);
         return swaps;
     }
 
@@ -194,27 +202,59 @@ public class RAM {
         }
         return foundIt;
     }
-
-    private int indexOfProcess(int processID){
-        for(int i =0;i<PROCESS_LIST.size();i++){
-            if(PROCESS_LIST.get(i).getId() == processID)
-                return i;
+    
+    public int[] access(int address, int processId, int method, Time time) throws Exception {
+        Process process = getProcess(processId);
+        System.out.printf("Otaining real address from virtual address %d of process %d",address,processId);
+        if(process==null){
+            throw new Exception("Process not in memory");
         }
-        return -1;
-    }
 
-    private Process getProcess(int processID){
+        int[] swaps = new int[2];
+        boolean found = false;
+
+        //For each address search for the one we are looking for
+
+        for (int[] x : process.getPageList()) {
+            if(x[2] < address && address < x[2]+PAGE_SIZE){
+                found = true;
+                //Si esta en memoria RAM
+                if(x[0] == 0){
+                    System.out.printf("VRAM address: $d RAM address: %d",address,x[1]);
+                }
+                else{
+                    
+                }
+            }
+        }
+        
+        return swaps;
+    }
+    
+    private Process getProcess(int processId){
         for(int i =0;i<PROCESS_LIST.size();i++){
-            if(PROCESS_LIST.get(i).getId() == processID)
-                return PROCESS_LIST.get(i);
+            if(PROCESS_LIST.get(i).getId() == processId)
+            return PROCESS_LIST.get(i);
         }
         return null;
     }
+    
+    // private int indexOfProcess(int processId){
+    //     for(int i =0;i<PROCESS_LIST.size();i++){
+    //         if(PROCESS_LIST.get(i).getId() == processId)
+    //             return i;
+    //     }
+    //     return -1;
+    // }
 
     /*
-        Updates which addresses where moved from VRAM to RAM in the process processList
+        Add new process to RAM, allocate and return amount of swaps in the operation
     */
-
+    
+    /*
+    Updates which addresses where moved from VRAM to RAM in the process processList
+    */
+    
     private void updateList(int processId, int oldIndex, List<int[]> addresses){
         Process process = processAtIndex(processId);
 
@@ -224,7 +264,7 @@ public class RAM {
     }
 
      /*
-        Returns Process in PROCESS_LIST from processID
+        Returns Process in PROCESS_LIST from processId
     */
     
     private Process processAtIndex(int processId){
@@ -239,7 +279,7 @@ public class RAM {
         algorithm that returns an array of indexes of pages based on FIFO
     */
 
-    private int[] FIFO(int amountOfPagesToFree) {
+    private int[] FIFOStack(int amountOfPagesToFree) {
 
         int[] indexes = new int[amountOfPagesToFree];
 
@@ -251,12 +291,16 @@ public class RAM {
         return indexes;
     }
 
-    private int[] LRU(int amountOfPagesToFree) {
+    /*
+        algorithm that returns an array of indexes of pages based on FIFO
+    */
+
+    private int[] LRUStack(int amountOfPagesToFree) {
 
         int[] indexes = new int[amountOfPagesToFree];
 
         for (int i = 0; i < indexes.length; i++) {
-            indexes[i] = FIFO_STACK.get(0);
+            indexes[i] = LRU_STACK.get(0);
             LRU_STACK.remove(0);
         }
 
