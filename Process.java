@@ -66,6 +66,14 @@ public class Process {
     }
 
     /*
+        returns pageList
+    */
+
+    public List<int[]> getPageList(){
+        return this.pageList;
+    }
+
+    /*
         Print the addresses of the process
     */
 

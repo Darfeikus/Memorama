@@ -114,7 +114,7 @@ public class RAM {
 
         //Gets the indexes of where to store the process in RAM
         int[] indexes;
-        
+
         if(method == 1){
             indexes = LRU(amountOfPagesToFree);
         }
@@ -152,6 +152,63 @@ public class RAM {
             FREE_PAGES++;
 
         }
+    }
+
+    /*
+        Cleans a process from both RAM and VRAM and returns the amount of swap outs
+    */
+
+    public int cleanProcess(int processID, VRAM vram, Time time) throws Exception{
+        int swaps = 0;
+        Process process = getProcess(processID);
+
+        if(process == null){
+            throw new Exception("Process not found in memory");
+        }
+
+        //Count swaps
+
+        swaps = process.getPageList().size();
+
+        //RemoveFromVram
+
+        vram.removeProcessFromMemory(processID);
+        removeProcessFromMemory(processID);
+        time.addSeconds(swaps);
+        return swaps;
+    }
+
+    /*
+        Removes a process from RAM memory
+    */
+
+    private boolean removeProcessFromMemory(int id) { 
+        boolean foundIt = false;
+        for (int i = 0; i < SIZE; i+=PAGE_SIZE) {
+            if (RAM[i] == id) {
+                for (int j = i; j < i+PAGE_SIZE; j++)
+                    RAM[j] = -1;
+                foundIt = true;
+                FREE_PAGES++;
+            }
+        }
+        return foundIt;
+    }
+
+    private int indexOfProcess(int processID){
+        for(int i =0;i<PROCESS_LIST.size();i++){
+            if(PROCESS_LIST.get(i).getId() == processID)
+                return i;
+        }
+        return -1;
+    }
+
+    private Process getProcess(int processID){
+        for(int i =0;i<PROCESS_LIST.size();i++){
+            if(PROCESS_LIST.get(i).getId() == processID)
+                return PROCESS_LIST.get(i);
+        }
+        return null;
     }
 
     /*

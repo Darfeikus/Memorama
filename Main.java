@@ -32,9 +32,15 @@ class Main{
             
             ram.print();
             vram.print();
-            ram.printProcessesAddressList();
+            // ram.printProcessesAddressList();
             System.out.println("Swaps: " + Arrays.toString(swaps));
-            
+            time.print();
+
+            swaps[1] += ram.cleanProcess(6,vram,time); //Deallocs
+            ram.print();
+            vram.print();
+            System.out.println("Swaps: " + Arrays.toString(swaps));
+            time.print();
         }
         catch(Exception e){
             System.out.println(e);
