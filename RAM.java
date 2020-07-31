@@ -99,8 +99,7 @@ public class RAM {
 
                 // Add page index to FIFO_STACK and LRU
 
-                FIFO_STACK.add(i);
-                LRU_STACK.add(i);
+                addToStacks(i);
 
                 amountOfPagesToFill--;
                 FREE_PAGES--;
@@ -289,6 +288,7 @@ public class RAM {
                         }
                         System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam);
                         //Swap In
+                        addToStacks(newIndexRam);
                         time.addSeconds(timeOfSwap);
                         swaps[1]++;
                         return swaps;
@@ -300,6 +300,8 @@ public class RAM {
                     else{
                         index = FIFOStack(1)[0];
                     }
+
+                    removeFromStacks(index);
                     
                     int movedProcessId = RAM[index];
                     int sizeOfPageRAM = removePageFromMemory(index);
@@ -322,13 +324,7 @@ public class RAM {
                         System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
                     }
                     System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam+address%PAGE_SIZE);
-                    
-                    if(method == 1){
-                        LRU_STACK.add(newIndexRam);
-                    }
-                    else{
-                        FIFO_STACK.add(newIndexRam);
-                    }
+                    addToStacks(newIndexRam);
                 }
             }
         }
@@ -387,7 +383,7 @@ public class RAM {
 
         for (int i = 0; i < indexes.length; i++) {
             indexes[i] = FIFO_STACK.get(0);
-            FIFO_STACK.remove(0);
+            removeFromStacks(indexes[i]);
         }
 
         return indexes;
@@ -403,10 +399,24 @@ public class RAM {
 
         for (int i = 0; i < indexes.length; i++) {
             indexes[i] = LRU_STACK.get(0);
-            LRU_STACK.remove(0);
+            removeFromStacks(indexes[i]);
         }
 
         return indexes;
+    }
+
+    /*
+     * Remove address from all stacks
+     */
+
+    private void removeFromStacks(int address) {
+        FIFO_STACK.remove((Integer) address);
+        LRU_STACK.remove((Integer) address);
+    }
+
+    private void addToStacks(int address) {
+        FIFO_STACK.add((Integer) address);
+        LRU_STACK.add((Integer) address);
     }
 
     /*
