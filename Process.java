@@ -11,6 +11,7 @@ public class Process {
     private Time startTime;
     private Time endTime;
     private Time turnaround;
+    private boolean active;
 
     /*
         Constructor of class Process
@@ -21,6 +22,7 @@ public class Process {
         this.size = size;
         this.startTime = startTime;
         this.pageList = pageList;
+        this.active = true;
     }
 
     /*
@@ -29,6 +31,7 @@ public class Process {
 
     public void changeProcess(int oldAddress, int newAddress) {
         int i = searchPageWithAddress(oldAddress);
+        
         if (pageList.get(i)[0] == 0){
             pageList.get(i)[0] = 1;
             pageList.get(i)[1] = newAddress;
@@ -59,6 +62,7 @@ public class Process {
     public void endProcess(Time endTime) {
         this.endTime = endTime;
         this.turnaround = Time.substractTimes(endTime, startTime);
+        this.active = false;
     }
 
     /*
@@ -70,11 +74,27 @@ public class Process {
     }
 
     /*
+        returns size of the process
+    */
+
+    public int getSize(){
+        return this.size;
+    }
+
+    /*
         returns pageList
     */
 
     public List<int[]> getPageList(){
         return this.pageList;
+    }
+
+    /*
+        returns active status
+    */
+
+    public boolean getStatus(){
+        return this.active;
     }
 
     /*

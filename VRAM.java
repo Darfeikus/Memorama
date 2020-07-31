@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 //Class that emulates a virtual memory
 public class VRAM {
     private final int PAGE_SIZE ; //Size of the page
@@ -47,17 +44,17 @@ public class VRAM {
 
     /* 
         A process is added to memory, first check if there are enough spaces, if there is then it is stored in memory
-        returns a list with the addresses of where the process was stored
+        returns the index of where it was stored
     */
 
-    public List<int[]> addProcess(int processId, int size) throws Exception{ 
-        List<int[]> indexOfPages = new ArrayList<int[]>();
+    public int addProcess(int processId, int size) throws Exception{ 
+        int index;
         int numberOfPages = (int)(Math.ceil((double)size/PAGE_SIZE));
         if (numberOfPages > freePages) {
             throw new MoreThanFreeMemoryException("Se pide mas memoria de la que hay disponible");
         }
-        indexOfPages = storeInMemory(processId, numberOfPages, size, indexOfPages);
-        return indexOfPages;
+        index = storeInMemory(processId, numberOfPages, size);
+        return index;
     }
 
     /*
@@ -65,16 +62,15 @@ public class VRAM {
         returns a list with the addresses of where the process was stored
     */
 
-    private List<int[]> storeInMemory(int processId, int numberOfPages, int size, List<int[]> indexOfPages) {
+    private int storeInMemory(int processId, int numberOfPages, int size) {
         for (int i = 0; i < MEMORY_LENGTH && numberOfPages != 0; i+=PAGE_SIZE) {
             if (vram[i] == -1) {
                 fillingMemory(processId, size, numberOfPages, i);
-                indexOfPages.add(new int[]{1,i});
                 freePages--;
-                numberOfPages--;
+                return i;
             }
         }
-        return indexOfPages;
+        return -1;
     }
 
     /*
@@ -96,11 +92,19 @@ public class VRAM {
         It returns the size of a process that is gonna be moved to ram, then it cleans memory
     */
     
-    public int movePageToRam(int processId) {
-        int sizeOfProcess = countSpace(processId);
-        this.removeProcessFromMemory(processId);
-        return sizeOfProcess;
-        
+    public int movePageToRam(int index) {
+        int size = 0;
+        for (int j = index; j < index + PAGE_SIZE; j++) {
+            if (vram[j] != -1) {
+                size++;
+                vram[j] = -1;
+            } else {
+                freePages++;
+                return size;
+            }
+        }
+        freePages++;
+        return size;        
     }
 
     /*
