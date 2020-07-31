@@ -82,6 +82,14 @@ public class Process {
     }
 
     /*
+        returns turnaround time;
+    */
+
+    public Time getTurnaround(){
+        return this.turnaround;
+    }
+
+    /*
         returns pageList
     */
 
