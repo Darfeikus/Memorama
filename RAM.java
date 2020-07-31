@@ -421,8 +421,16 @@ public class RAM {
     /*
         returns number of Free Pages
     */
-    public int getNUMBER_OF_PAGES() {
+    public int get_NUMBER_OF_PAGES() {
         return this.NUMBER_OF_PAGES;
+    }
+
+    /*
+        returns number of PAGE FAULTS
+    */
+
+    public int get_PAGE_FAULTS() {
+        return this.PAGE_FAULTS;
     }
 
     /*

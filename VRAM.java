@@ -108,18 +108,6 @@ public class VRAM {
     }
 
     /*
-        Returns the size of certain process
-    */
-
-    private int countSpace(int processId) {
-        int sizeOfProcess = 0;
-        for (int i = 0; i < MEMORY_LENGTH; i++) 
-            if(vram[i] == processId)
-                sizeOfProcess++;
-        return sizeOfProcess;
-    }
-
-    /*
         Returns the number of free pages
     */ 
 
