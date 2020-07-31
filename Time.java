@@ -1,7 +1,4 @@
 /* Author: Pablo Vera Teran */
-
-import java.util.*;
-
 public class Time {
 
 	private int hours;
@@ -23,7 +20,7 @@ public class Time {
 	}
 
 	// Overwriting for different argument type
-	void addSeconds(float sec) {
+	void addSeconds(double sec) {
 		this.miliseconds += (sec % 1) * 1000;
 		this.seconds += sec - (sec % 1);
 		simplifyTime();
@@ -78,6 +75,10 @@ public class Time {
 
 	int getMiliseconds() {
 		return this.miliseconds;
+	}
+
+	void print(){
+		System.out.println(hours + "h: " + minutes + "m: " + seconds + "s: " + miliseconds + "ms");
 	}
 
 	Time getTime() {
