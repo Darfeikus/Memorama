@@ -184,7 +184,7 @@ public class RAM {
         removeProcessFromMemory(processId);
 
         DEAD_PROCESS_LIST.add(process);
-        PROCESS_LIST.remove(process);
+        PROCESS_LIST.remove((Integer)process);
         IDS.remove(processId);
 
         time.addSeconds(timeOfSwap * swaps);
