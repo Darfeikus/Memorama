@@ -449,6 +449,14 @@ public class RAM {
         return this.PAGE_FAULTS;
     }
 
+    public List<Process> getDeadProcesses(){
+        return this.DEAD_PROCESS_LIST;
+    }
+
+    public void deleteProcesses(){
+        DEAD_PROCESS_LIST.clear();
+    }
+
     /*
      * Print RAM by pages
      */
