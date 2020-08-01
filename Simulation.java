@@ -27,7 +27,9 @@ public class Simulation {
         Ends Simulation by changing running value
     */
     
-    public void endSimulation(){
+    private void endSimulation(){
+        ram.print();
+        vram.print();
         this.running = false;
     }
 
@@ -47,6 +49,7 @@ public class Simulation {
         String[] inputs = s.split(" ");
         switch(inputs[0]){
             case "A":
+                    accessVirtualAddress(Integer.parseInt(inputs[1]),Integer.parseInt(inputs[2]),Integer.parseInt(inputs[3]));
                 break;
             case "C":
                 commentary(inputs[1]);
@@ -60,11 +63,12 @@ public class Simulation {
             case "L":
                 break;
             case "P":
+                createProcess(Integer.parseInt(inputs[2]),Integer.parseInt(inputs[1]));
                 break;
         }
     }
 
-    public void createProcess(int processId, int processSize) {
+    private void createProcess(int processId, int processSize) {
         try{
             int[] operationSwaps = ram.addProcess(processId, processSize, vram, time, 0);
             swaps[0] += operationSwaps[0];
@@ -75,13 +79,23 @@ public class Simulation {
         }
     }
 
+    private void accessVirtualAddress(int address, int processId, int method){
+        try{
+            ram.access(address, processId, vram, time, method);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     private boolean checkValidString(String s){
         return true;
     }
 
     public void startSimulation(){
         String command;
-        while(running){
+        while(running && scanner.hasNextLine()){
             command = scanner.nextLine();
             if(checkValidString(command)){
                 readEntry(command);
@@ -89,6 +103,7 @@ public class Simulation {
             else{
                 System.out.println("Command not valid");
             }
+            ram.print();
         }
     }
 
