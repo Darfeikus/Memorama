@@ -1,5 +1,7 @@
 import java.util.*;
 
+import sun.security.x509.IssuerAlternativeNameExtension;
+
 public class Simulation {
     private Scanner scanner;
     private Time time;
@@ -78,23 +80,35 @@ public class Simulation {
         String[] inputs = s.split(" ");
         switch (inputs[0]) {
             case "A":
-                if (inputs.length == 4)
-                    break;
+                if (inputs.length == 4 && isInt(inputs[1]) && isInt(inputs[2]) && (inputs[3] == "0" | inputs[3] == "1"))
+                    return true;
+                else
+                    return false;
             case "C":
                 if (s.length() > 3)
                     return true;
                 else
                     return false;
             case "E":
-                break;
+                if (s == "E")
+                    return true;
+                else
+                    return false;
             case "F":
-                endSimulation();
-                // report();
-                break;
+                if (s == "F")
+                    return true;
+                else
+                    return false;
             case "L":
-                break;
+                if (inputs.length == 2 && isInt(inputs[1]))
+                    return true;
+                else
+                    return false;
             case "P":
-                break;
+                if (inputs.length == 3 && isInt(inputs[1]) && isInt(inputs[2]))
+                    return true;
+                else
+                    return false;
         }
         return false;
     }
