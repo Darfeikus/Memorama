@@ -21,8 +21,20 @@ public class Simulation {
         this.time = new Time();
     }
 
-    void createProcess(int processId, int processSize) {
+    public void createProcess(int processId, int processSize) {
 
+    }
+
+    private boolean checkValidString(){
+        return true;
+    }
+
+    public void startSimulation(){
+        String[] command;
+        command = scanner.nextLine().split(" ");
+        // while(){
+
+        // }
     }
 
 }
