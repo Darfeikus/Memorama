@@ -11,6 +11,7 @@ public class RAM {
 
     private double timeOfSwap;
     private double timeOfAccess;
+    private double timeOfFreeing;
 
     private int[] RAM;
     private int FREE_PAGES;
@@ -24,7 +25,7 @@ public class RAM {
 
     /* Constructor of class RAM */
 
-    public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess) throws Exception {
+    public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess, double timeOfFreeing) throws Exception {
 
         boolean powersOfTwo = size > 0 && ((size & (size - 1))) == 0 && PAGE_SIZE > 0
                 && ((PAGE_SIZE & (PAGE_SIZE - 1))) == 0;
@@ -44,6 +45,7 @@ public class RAM {
         this.RAM = new int[size];
         this.timeOfSwap = timeOfSwap;
         this.timeOfAccess = timeOfAccess;
+        this.timeOfFreeing = timeOfFreeing;
 
         Arrays.fill(RAM, -1);
     }
@@ -184,10 +186,10 @@ public class RAM {
         removeProcessFromMemory(processId);
 
         DEAD_PROCESS_LIST.add(process);
-        PROCESS_LIST.remove((Integer)process);
-        IDS.remove(processId);
+        PROCESS_LIST.remove(process);
+        IDS.remove((Integer)processId);
 
-        time.addSeconds(timeOfSwap * swaps);
+        time.addSeconds(timeOfFreeing * swaps);
         process.endProcess(time);
         return swaps;
     }
