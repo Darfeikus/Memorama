@@ -243,7 +243,7 @@ public class RAM {
         Process process = getProcess(processId);
         System.out.printf("Obtaining real address from virtual address %d of process %d\n",address,processId);
 
-        if(method == 1){
+        if(accessRead == 1){
             System.out.println("and modifying");
         }
         
@@ -265,7 +265,7 @@ public class RAM {
                 found = true;
                 //Si esta en memoria RAM
                 if(x[0] == 0){
-                    if(method==1){
+                    if(accessRead==1){
                         System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
                     }
                     System.out.printf("Virtual address: %d RAM address: %d\n",address,x[1]+address%PAGE_SIZE);
@@ -283,7 +283,7 @@ public class RAM {
                         newIndexRam = allocatePage(processId, sizeOfPageVRAM);
                         updateList(processId, vramAddress, newIndexRam);
                         System.out.printf("Page %d of process %d was localized in frame %d of VRAM\nit has been changed to frame %d in RAM\n", address, processId, vramAddress/PAGE_SIZE, newIndexRam/PAGE_SIZE);
-                        if(method==1){
+                        if(accessRead==1){
                             System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
                         }
                         System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam);
@@ -300,8 +300,6 @@ public class RAM {
                     else{
                         index = FIFOStack(1)[0];
                     }
-
-                    removeFromStacks(index);
                     
                     int movedProcessId = RAM[index];
                     int sizeOfPageRAM = removePageFromMemory(index);
