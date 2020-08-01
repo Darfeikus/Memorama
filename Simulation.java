@@ -1,7 +1,5 @@
 import java.util.*;
 
-import sun.security.x509.IssuerAlternativeNameExtension;
-
 public class Simulation {
     private Scanner scanner;
     private Time time;
