@@ -5,13 +5,14 @@ public class Simulation {
     private Time time;
     private RAM ram;
     private VRAM vram;
+    private int swapMethod;
     private List<Block> blockList = new ArrayList<>();
     // Log log = new Log();
     private int currentPageFaults = 0;
     private int[] swaps = new int[2]; // 0 for out y 1 for in
     private boolean running;
 
-    Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess) {
+    Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess, int swapMethod) {
         this.scanner = scanner;
         try {
             this.ram = new RAM(RAM_SIZE, PAGE_SIZE, timeOfSwap, timeOfAccess);
@@ -19,6 +20,7 @@ public class Simulation {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        this.swapMethod = swapMethod;
         this.time = new Time();
         this.running = true;
     }
@@ -55,9 +57,9 @@ public class Simulation {
                 commentary(s.substring(2));
                 break;
             case "E":
+                endSimulation();
                 break;
             case "F":
-                endSimulation();
                 // report();
                 break;
             case "L":
@@ -78,9 +80,9 @@ public class Simulation {
         }
     }
 
-    private void accessVirtualAddress(int address, int processId, int method){
+    private void accessVirtualAddress(int address, int processId, int readWrite){
         try{
-            int[] operationSwaps = ram.access(address, processId, vram, time, method);
+            int[] operationSwaps = ram.access(address, processId, vram, time, swapMethod,readWrite);
             swaps[0] += operationSwaps[0];
             swaps[1] += operationSwaps[1];
         }

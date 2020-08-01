@@ -237,7 +237,7 @@ public class RAM {
         return -1;
     }
 
-    public int[] access(int address, int processId, VRAM vram, Time time, int method) throws Exception {
+    public int[] access(int address, int processId, VRAM vram, Time time, int method, int accessRead) throws Exception {
         time.addSeconds(timeOfAccess);
         
         Process process = getProcess(processId);
