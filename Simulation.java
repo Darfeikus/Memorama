@@ -1,7 +1,5 @@
 import java.util.*;
 
-import sun.security.x509.IssuerAlternativeNameExtension;
-
 public class Simulation {
     private Scanner scanner;
     private Time time;
@@ -25,6 +23,10 @@ public class Simulation {
         this.swapMethod = swapMethod;
         this.time = new Time();
         this.running = true;
+    }
+
+    private int parseInt(String s){
+        return Integer.parseInt(s);
     }
 
     /*
@@ -53,7 +55,7 @@ public class Simulation {
         String[] inputs = s.split(" ");
         switch (inputs[0]) {
             case "A":
-                    accessVirtualAddress(Integer.parseInt(inputs[1]),Integer.parseInt(inputs[2]),Integer.parseInt(inputs[3]));
+                    accessVirtualAddress(parseInt(inputs[1]),parseInt(inputs[2]),parseInt(inputs[3]));
                 break;
             case "C":
                 commentary(s.substring(2));
@@ -67,7 +69,7 @@ public class Simulation {
             case "L":
                 break;
             case "P":
-                createProcess(Integer.parseInt(inputs[2]),Integer.parseInt(inputs[1]));
+                createProcess(parseInt(inputs[2]),parseInt(inputs[1]));
                 break;
         }
     }
