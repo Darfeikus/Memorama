@@ -25,7 +25,7 @@ public class Simulation {
 
     }
 
-    private boolean checkValidString(){
+    private boolean checkValidString(String s){
         return true;
     }
 
