@@ -12,6 +12,7 @@ public class Process {
     private Time endTime;
     private Time turnaround;
     private boolean active;
+    private int PAGE_FAULTS;
 
     /*
         Constructor of class Process
@@ -40,6 +41,10 @@ public class Process {
             pageList.get(i)[0] = 0;
             pageList.get(i)[1] = newAddress;
         }
+    }
+
+    public void addPage_Fault(int i){
+        PAGE_FAULTS+=i;
     }
 
     /*

@@ -36,6 +36,7 @@ public class Simulation {
     private void endSimulation(){
         ram.print();
         vram.print();
+        System.out.println("GAMER OVER");
         this.running = false;
     }
 
@@ -55,7 +56,7 @@ public class Simulation {
         String[] inputs = s.split(" ");
         switch (inputs[0]) {
             case "A":
-                    accessVirtualAddress(parseInt(inputs[1]),parseInt(inputs[2]),parseInt(inputs[3]));
+                accessVirtualAddress(parseInt(inputs[1]),parseInt(inputs[2]),parseInt(inputs[3]));
                 break;
             case "C":
                 commentary(s.substring(2));
@@ -99,7 +100,7 @@ public class Simulation {
         String[] inputs = s.split(" ");
         switch (inputs[0]) {
             case "A":
-                if (inputs.length == 4 && isInt(inputs[1]) && isInt(inputs[2]) && (inputs[3] == "0" | inputs[3] == "1"))
+                if (inputs.length == 4 && isInt(inputs[1]) && isInt(inputs[2]) && (inputs[3].equals("0") | inputs[3].equals("1")))
                     return true;
                 else
                     return false;
@@ -109,12 +110,12 @@ public class Simulation {
                 else
                     return false;
             case "E":
-                if (s == "E")
+                if (s.equals("E"))
                     return true;
                 else
                     return false;
             case "F":
-                if (s == "F")
+                if (s.equals("F"))
                     return true;
                 else
                     return false;
@@ -141,7 +142,6 @@ public class Simulation {
             } else {
                 System.out.println("Command not valid");
             }
-            ram.print();
         }
     }
 

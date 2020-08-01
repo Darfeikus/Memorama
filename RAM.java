@@ -20,6 +20,7 @@ public class RAM {
     private List<Integer> IDS = new ArrayList<Integer>();
 
     private List<Process> PROCESS_LIST = new ArrayList<Process>();
+    private List<Process> DEAD_PROCESS_LIST = new ArrayList<Process>();
 
     /* Constructor of class RAM */
 
@@ -168,7 +169,7 @@ public class RAM {
     public int cleanProcess(int processId, VRAM vram, Time time) throws Exception {
         int swaps = 0;
         Process process = getProcess(processId);
-
+        
         if (process == null) {
             throw new Exception("Process not found in memory");
         }
@@ -181,6 +182,11 @@ public class RAM {
 
         vram.removeProcessFromMemory(processId);
         removeProcessFromMemory(processId);
+
+        DEAD_PROCESS_LIST.add(process);
+        PROCESS_LIST.remove(process);
+        IDS.remove(processId);
+
         time.addSeconds(timeOfSwap * swaps);
         process.endProcess(time);
         return swaps;
@@ -194,6 +200,7 @@ public class RAM {
         boolean foundIt = false;
         for (int i = 0; i < SIZE; i += PAGE_SIZE) {
             if (RAM[i] == id) {
+                removeFromStacks(id);
                 for (int j = i; j < i + PAGE_SIZE; j++)
                     RAM[j] = -1;
                 foundIt = true;
@@ -273,6 +280,7 @@ public class RAM {
                 }
                 else{
                     PAGE_FAULTS++;
+                    process.addPage_Fault(1);
                     int vramAddress = x[1];
                     int index;
                     //Remove page from VRAM and get the size of the page
