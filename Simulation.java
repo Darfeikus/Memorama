@@ -21,6 +21,10 @@ public class Simulation {
         this.time = new Time();
     }
 
+    private void readEntry(String s){
+
+    }
+
     public void createProcess(int processId, int processSize) {
 
     }
@@ -30,11 +34,18 @@ public class Simulation {
     }
 
     public void startSimulation(){
-        String[] command;
-        command = scanner.nextLine().split(" ");
-        // while(){
-
-        // }
+        String command = "";
+        while(command.charAt(0) != 'F'){
+            command = scanner.nextLine();
+            if(checkValidString(command)){
+                readEntry(command);
+            }
+            else{
+                System.out.println("Command not valid");
+            }
+        }
+        System.out.println("Out");
+        // report();
     }
 
 }
