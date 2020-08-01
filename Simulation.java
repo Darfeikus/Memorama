@@ -167,7 +167,7 @@ public class Simulation {
     /* 
         
     */
-    private turnaround(List<Process> deadProcesses) {
+    private void turnaround(List<Process> deadProcesses) {
         System.out.println("Turnaround Por Proceso: ");
         int sumSeconds = 0;
         Time timeTemp;
@@ -184,7 +184,7 @@ public class Simulation {
         
     }
     
-    private average(int size, sumSeconds) {
+    private void average(int size, int sumSeconds) {
         int average = sumSeconds/size;
         Time timeTemp = new Time();
         timeTemp.addSeconds(average);
@@ -192,13 +192,13 @@ public class Simulation {
         timeTemp.print();
     }
 
-    private numberOfPageFaults(List<Process> deadProcesses) {
+    private void numberOfPageFaults(List<Process> deadProcesses) {
         for (Process process: deadProcesses) {
             System.out.println(process.getId() + ": " + process.getPageFaults());
         }
     }
 
-    private numberOfSwaps() {
+    private void numberOfSwaps() {
         System.out.println("Swap out: " + swaps[0]);
         System.out.println("Swap in: " + swaps[1]);
     }
