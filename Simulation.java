@@ -14,7 +14,7 @@ public class Simulation {
     Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess) {
         this.scanner = scanner;
         try {
-            this.ram = new RAM(RAM_SIZE, PAGE_SIZE,timeOfSwap,timeOfAccess);
+            this.ram = new RAM(RAM_SIZE, PAGE_SIZE, timeOfSwap, timeOfAccess);
             this.vram = new VRAM(VRAM_SIZE, PAGE_SIZE);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -34,31 +34,31 @@ public class Simulation {
     }
 
     /*
-        Prints a comment from the user in console
-    */
+     * Prints a comment from the user in console
+     */
 
-    public void commentary(String s){
+    public void commentary(String s) {
         System.out.println(s);
     }
 
     /*
-        Reads the entry from the user, and performs the correspondent assignment
-    */
+     * Reads the entry from the user, and performs the correspondent assignment
+     */
 
-    private void readEntry(String s){
+    private void readEntry(String s) {
         String[] inputs = s.split(" ");
-        switch(inputs[0]){
+        switch (inputs[0]) {
             case "A":
                     accessVirtualAddress(Integer.parseInt(inputs[1]),Integer.parseInt(inputs[2]),Integer.parseInt(inputs[3]));
                 break;
             case "C":
-                commentary(inputs[1]);
+                commentary(s.substring(2));
                 break;
             case "E":
                 break;
             case "F":
                 endSimulation();
-                //report();
+                // report();
                 break;
             case "L":
                 break;
@@ -73,37 +73,66 @@ public class Simulation {
             int[] operationSwaps = ram.addProcess(processId, processSize, vram, time, 0);
             swaps[0] += operationSwaps[0];
             swaps[1] += operationSwaps[1];
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     private void accessVirtualAddress(int address, int processId, int method){
         try{
-            ram.access(address, processId, vram, time, method);
+            int[] operationSwaps = ram.access(address, processId, vram, time, method);
+            swaps[0] += operationSwaps[0];
+            swaps[1] += operationSwaps[1];
         }
         catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
 
-
-    private boolean checkValidString(String s){
-        return true;
+    private boolean checkValidString(String s) {
+        String[] inputs = s.split(" ");
+        switch (inputs[0]) {
+            case "A":
+                if (inputs.length == 4)
+                    break;
+            case "C":
+                if (s.length() > 3)
+                    return true;
+                else
+                    return false;
+            case "E":
+                break;
+            case "F":
+                endSimulation();
+                // report();
+                break;
+            case "L":
+                break;
+            case "P":
+                break;
+        }
+        return false;
     }
 
-    public void startSimulation(){
+    public void startSimulation() {
         String command;
         while(running && scanner.hasNextLine()){
             command = scanner.nextLine();
-            if(checkValidString(command)){
+            if (checkValidString(command)) {
                 readEntry(command);
-            }
-            else{
+            } else {
                 System.out.println("Command not valid");
             }
             ram.print();
+        }
+    }
+
+    static boolean isInt(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
         }
     }
 
