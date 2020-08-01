@@ -8,7 +8,6 @@ public class Simulation {
     private int swapMethod;
     private List<Block> blockList = new ArrayList<>();
     // Log log = new Log();
-    private int currentPageFaults = 0;
     private int[] swaps = new int[2]; // 0 for out y 1 for in
     private boolean running;
 
@@ -152,6 +151,56 @@ public class Simulation {
         } catch (NumberFormatException ex) {
             return false;
         }
+    }
+
+    /* 
+        Prints a whole report of the block of processes
+    */
+    public void report() {
+        List<Process> deadProcesses = ram.getDeadProcesses();
+        ram.deleteProcesses();
+        turnaround(deadProcesses);
+        numberOfPageFaults(deadProcesses);
+        numberOfSwaps();
+    }
+
+    /* 
+        
+    */
+    private turnaround(List<Process> deadProcesses) {
+        System.out.println("Turnaround Por Proceso: ");
+        int sumSeconds = 0;
+        Time timeTemp;
+        for (Process process: deadProcesses) {
+            timeTemp = process.getTurnaround();
+            System.out.print(process.getId() + ": ");
+            timeTemp.print();
+            sumSeconds += timeTemp.getMiliseconds()*0.001;
+            sumSeconds += timeTemp.getSeconds();
+            sumSeconds += timeTemp.getMinutes()*60;
+            sumSeconds += timeTemp.getHours()*3600;
+        }
+        average(deadProcesses.size(), sumSeconds);
+        
+    }
+    
+    private average(int size, sumSeconds) {
+        int average = sumSeconds/size;
+        Time timeTemp = new Time();
+        timeTemp.addSeconds(average);
+        System.out.println("Turnaround Promedio: ");
+        timeTemp.print();
+    }
+
+    private numberOfPageFaults(List<Process> deadProcesses) {
+        for (Process process: deadProcesses) {
+            System.out.println(process.getId() + ": " + process.getPageFaults());
+        }
+    }
+
+    private numberOfSwaps() {
+        System.out.println("Swap out: " + swaps[0]);
+        System.out.println("Swap in: " + swaps[1]);
     }
 
 }

@@ -110,6 +110,14 @@ public class Process {
         return this.active;
     }
 
+     /*
+        returns number of page faults
+    */
+
+    public int getPageFaults(){
+        return this.PAGE_FAULTS;
+    }
+
     /*
         Print the addresses of the process
     */
