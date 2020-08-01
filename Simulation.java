@@ -1,14 +1,15 @@
 import java.util.*;
 
 public class Simulation {
-    Scanner scanner;
-    Time time;
-    RAM ram;
-    VRAM vram;
-    List<Block> blockList = new ArrayList<>();
+    private Scanner scanner;
+    private Time time;
+    private RAM ram;
+    private VRAM vram;
+    private List<Block> blockList = new ArrayList<>();
     // Log log = new Log();
-    int currentPageFaults = 0;
-    int[] swaps = new int[2]; // 0 for out y 1 for in
+    private int currentPageFaults = 0;
+    private int[] swaps = new int[2]; // 0 for out y 1 for in
+    private boolean running;
 
     Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess) {
         this.scanner = scanner;
@@ -19,14 +20,59 @@ public class Simulation {
             System.out.println(e.getMessage());
         }
         this.time = new Time();
+        this.running = true;
     }
 
-    private void readEntry(String s){
+    /*
+        Ends Simulation by changing running value
+    */
+    
+    public void endSimulation(){
+        this.running = false;
+    }
 
+    /*
+        Prints a comment from the user in console
+    */
+
+    public void commentary(String s){
+        System.out.println(s);
+    }
+
+    /*
+        Reads the entry from the user, and performs the correspondent assignment
+    */
+
+    private void readEntry(String s){
+        String[] inputs = s.split(" ");
+        switch(inputs[0]){
+            case "A":
+                break;
+            case "C":
+                commentary(inputs[1]);
+                break;
+            case "E":
+                break;
+            case "F":
+                endSimulation();
+                //report();
+                break;
+            case "L":
+                break;
+            case "P":
+                break;
+        }
     }
 
     public void createProcess(int processId, int processSize) {
-
+        try{
+            int[] operationSwaps = ram.addProcess(processId, processSize, vram, time, 0);
+            swaps[0] += operationSwaps[0];
+            swaps[1] += operationSwaps[1];
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     private boolean checkValidString(String s){
@@ -34,8 +80,8 @@ public class Simulation {
     }
 
     public void startSimulation(){
-        String command = "";
-        while(command.charAt(0) != 'F'){
+        String command;
+        while(running){
             command = scanner.nextLine();
             if(checkValidString(command)){
                 readEntry(command);
@@ -44,8 +90,6 @@ public class Simulation {
                 System.out.println("Command not valid");
             }
         }
-        System.out.println("Out");
-        // report();
     }
 
 }
