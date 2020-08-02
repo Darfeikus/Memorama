@@ -97,7 +97,7 @@ public class RAM {
 
                 // Add page index to list
 
-                addresses.add(new int[] { 0, i, page });
+                addresses.add(new int[] { 0, i, page, 0});
                 page += PAGE_SIZE;
 
                 // Add page index to FIFO_STACK and LRU
@@ -276,6 +276,7 @@ public class RAM {
                 if(x[0] == 0){
                     if(accessRead==1){
                         System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
+                        x[3] = 1;
                     }
                     System.out.printf("Virtual address: %d RAM address: %d\n",address,x[1]+address%PAGE_SIZE);
                     LRU(x[1]);
@@ -295,6 +296,7 @@ public class RAM {
                         System.out.printf("Page %d of process %d was localized in frame %d of VRAM\nit has been changed to frame %d in RAM\n", address, processId, vramAddress/PAGE_SIZE, newIndexRam/PAGE_SIZE);
                         if(accessRead==1){
                             System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
+                            x[3] = 1;
                         }
                         System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam);
                         //Swap In

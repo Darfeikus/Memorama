@@ -123,7 +123,7 @@ public class Process{
     */
 
     public void printAddresses(){
-        System.out.printf("\nProcess %d address list\n",id);
+        System.out.printf("Process %d address list\n",id);
         
         List<Integer> real = new ArrayList<Integer>();
         List<Integer> virtual = new ArrayList<Integer>();
