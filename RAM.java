@@ -55,7 +55,7 @@ public class RAM {
      */
 
     public int[] addProcess(int processId, int size, VRAM vram, Time time, int method) throws Exception {
-
+        Time temp = new Time(time);
         List<int[]> addresses = new ArrayList<>();
         int[] swaps = new int[2];
         int page = 0;
@@ -112,7 +112,7 @@ public class RAM {
                 swaps[1]++;
             }
         }
-        Process newProcess = new Process(processId, size, time, addresses);
+        Process newProcess = new Process(processId, size, temp, addresses);
         PROCESS_LIST.add(newProcess);
         return swaps;
     }
@@ -317,7 +317,7 @@ public class RAM {
                     //swap out
                     
                     time.addSeconds(timeOfSwap);
-                    swaps[0]++;
+                    // swaps[0]++;
                     int newIndexVram = vram.addProcess(movedProcessId, sizeOfPageRAM);
                     updateList(movedProcessId, index, newIndexVram);
                     //swap in

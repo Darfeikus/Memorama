@@ -53,6 +53,7 @@ public class Simulation {
 
     private void readEntry(String s) {
         String[] inputs = s.split(" ");
+        System.out.println(s);
         switch (inputs[0]) {
             case "A":
                 accessVirtualAddress(parseInt(inputs[1]),parseInt(inputs[2]),parseInt(inputs[3]));
@@ -64,13 +65,25 @@ public class Simulation {
                 endSimulation();
                 break;
             case "F":
-                // report();
+                report();
                 break;
             case "L":
+                clean(parseInt(inputs[1]));
                 break;
             case "P":
                 createProcess(parseInt(inputs[2]),parseInt(inputs[1]));
                 break;
+        }
+    }
+
+    private void clean(int processId){
+        try{
+            swaps[0]+=ram.cleanProcess(processId, vram, time);
+            Process temp = ram.getDeadProcesses().get(ram.getDeadProcesses().size()-1);
+            temp.printAddresses();
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
         }
     }
 
@@ -158,10 +171,14 @@ public class Simulation {
     */
     public void report() {
         List<Process> deadProcesses = ram.getDeadProcesses();
-        ram.deleteProcesses();
+        if(deadProcesses.size() == 0){
+            System.out.println("Processes were not ended during this block");
+            return;
+        }
         turnaround(deadProcesses);
         numberOfPageFaults(deadProcesses);
         numberOfSwaps();
+        ram.deleteProcesses();
     }
 
     /* 
@@ -169,11 +186,11 @@ public class Simulation {
     */
     private void turnaround(List<Process> deadProcesses) {
         System.out.println("Turnaround Por Proceso: ");
-        int sumSeconds = 0;
+        double sumSeconds = 0;
         Time timeTemp;
         for (Process process: deadProcesses) {
             timeTemp = process.getTurnaround();
-            System.out.print(process.getId() + ": ");
+            System.out.print("\tProceso " + process.getId() + ": ");
             timeTemp.print();
             sumSeconds += timeTemp.getMiliseconds()*0.001;
             sumSeconds += timeTemp.getSeconds();
@@ -184,17 +201,19 @@ public class Simulation {
         
     }
     
-    private void average(int size, int sumSeconds) {
-        int average = sumSeconds/size;
+    private void average(int size, double sumSeconds) {
+        double average = sumSeconds/size;
         Time timeTemp = new Time();
         timeTemp.addSeconds(average);
         System.out.println("Turnaround Promedio: ");
+        System.out.printf("\t");
         timeTemp.print();
     }
 
     private void numberOfPageFaults(List<Process> deadProcesses) {
+        System.out.println("Page Faults");
         for (Process process: deadProcesses) {
-            System.out.println(process.getId() + ": " + process.getPageFaults());
+            System.out.println("\tProceso " + process.getId() + ": " + process.getPageFaults());
         }
     }
 
