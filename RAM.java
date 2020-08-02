@@ -23,7 +23,7 @@ public class RAM {
     private List<Process> PROCESS_LIST = new ArrayList<Process>();
     private List<Process> DEAD_PROCESS_LIST = new ArrayList<Process>();
 
-    /* Constructor of class RAM */
+    /*  Constructor of class RAM*/
 
     public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess, double timeOfFreeing) throws Exception {
 
@@ -51,8 +51,8 @@ public class RAM {
     }
 
     /*
-     * Add new process to RAM, allocate and return amount of swaps in the operation
-     */
+        Add new process to RAM, allocate and return amount of swaps in the operation
+    */
 
     public int[] addProcess(int processId, int size, VRAM vram, Time time, int method) throws Exception {
         Time temp = new Time(time);
@@ -80,7 +80,6 @@ public class RAM {
         }
 
         if (FREE_PAGES < amountOfPagesToFill) {
-            // System.out.printf("Not enough pages, rellocating %d pages\n", amountOfPagesToFill - FREE_PAGES);
             freeSpace(amountOfPagesToFill - FREE_PAGES, vram, time, swaps, method);
         }
 
@@ -118,9 +117,9 @@ public class RAM {
     }
 
     /*
-     * Frees space in RAM by moving it to the instance of VRAM, this is where it
-     * uses the algorithms for paging
-     */
+        Frees space in RAM by moving it to the instance of VRAM, this is where it
+        uses the algorithms for paging
+    */
 
     private void freeSpace(int amountOfPagesToFree, VRAM vram, Time time, int[] swaps, int method) throws Exception {
 
@@ -165,8 +164,8 @@ public class RAM {
     }
 
     /*
-     * Cleans a process from both RAM and VRAM and returns the amount of swap outs
-     */
+        Cleans a process from both RAM and VRAM and returns the amount of swap outs
+    */
 
     public int cleanProcess(int processId, VRAM vram, Time time) throws Exception {
         int swaps = 0;
@@ -189,14 +188,14 @@ public class RAM {
         PROCESS_LIST.remove(process);
         IDS.remove((Integer)processId);
 
-        time.addSeconds(timeOfFreeing * swaps);
+        time.addSeconds(timeOfFreeing   swaps);
         process.endProcess(time);
         return swaps;
     }
 
     /*
-     * Removes a process from RAM memory
-     */
+        Removes a process from RAM memory
+    */
 
     private boolean removeProcessFromMemory(int id) {
         boolean foundIt = false;
@@ -214,7 +213,7 @@ public class RAM {
 
     /*
         Removes a process from RAM memory and returns the size of the page
-    */
+   */
 
     private int removePageFromMemory(int index) {
         int size = 0;
@@ -233,7 +232,7 @@ public class RAM {
 
     /*
         allocates a page in RAM, return its index
-    */
+   */
 
     private int allocatePage(int processId, int size) {
         for (int i = 0; i < SIZE; i+= PAGE_SIZE) {
@@ -245,6 +244,11 @@ public class RAM {
         }
         return -1;
     }
+
+    /*
+        Read or Modify operation of address of a process, if it's in VRAM it moves it to RAM and modify/read accordingly
+        It also uses de paging algorithm to select the pages to move.
+   */
 
     public int[] access(int address, int processId, VRAM vram, Time time, int method, int accessRead) throws Exception {
         time.addSeconds(timeOfAccess);
@@ -272,7 +276,7 @@ public class RAM {
         for (int[] x : process.getPageList()) {
             if(x[2] <= address && address < x[2]+PAGE_SIZE){
                 found = true;
-                //Si esta en memoria RAM
+                //If process is in RAM memory
                 if(x[0] == 0){
                     if(accessRead==1){
                         System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
@@ -319,7 +323,6 @@ public class RAM {
                     //swap out
                     
                     time.addSeconds(timeOfSwap);
-                    // swaps[0]++;
                     int newIndexVram = vram.addProcess(movedProcessId, sizeOfPageRAM);
                     updateList(movedProcessId, index, newIndexVram);
                     //swap in
@@ -346,6 +349,10 @@ public class RAM {
         return swaps;
     }
 
+    /*
+        Returns process in processlist by processID
+   */
+
     private Process getProcess(int processId) {
         for (int i = 0; i < PROCESS_LIST.size(); i++) {
             if (PROCESS_LIST.get(i).getId() == processId)
@@ -354,17 +361,9 @@ public class RAM {
         return null;
     }
 
-    // private int indexOfProcess(int processId){
-    // for(int i =0;i<PROCESS_LIST.size();i++){
-    // if(PROCESS_LIST.get(i).getId() == processId)
-    // return i;
-    // }
-    // return -1;
-    // }
-
     /*
-     * Updates which addresses where moved from VRAM to RAM in the processList
-     */
+        Updates which addresses where moved from VRAM to RAM in the processList
+    */
 
     private void updateList(int processId, int oldIndex,int newIndex) {
         Process process = processAtIndex(processId);
@@ -372,8 +371,8 @@ public class RAM {
     }
 
     /*
-     * Returns Process in PROCESS_LIST from processId
-     */
+        Returns Process in PROCESS_LIST from processId
+    */
 
     private Process processAtIndex(int processId) {
         for (Process x : PROCESS_LIST) {
@@ -384,8 +383,8 @@ public class RAM {
     }
 
     /*
-     * algorithm that returns an array of indexes of pages based on FIFO
-     */
+        algorithm that returns an array of indexes of pages based on FIFO
+    */
 
     private int[] FIFOStack(int amountOfPagesToFree) {
 
@@ -400,8 +399,8 @@ public class RAM {
     }
 
     /*
-     * algorithm that returns an array of indexes of pages based on FIFO
-     */
+        algorithm that returns an array of indexes of pages based on FIFO
+    */
 
     private int[] LRUStack(int amountOfPagesToFree) {
 
@@ -416,13 +415,17 @@ public class RAM {
     }
 
     /*
-     * Remove address from all stacks
-     */
+        Remove address from all stacks
+    */
 
     private void removeFromStacks(int address) {
         FIFO_STACK.remove((Integer) address);
         LRU_STACK.remove((Integer) address);
     }
+
+    /*
+        Adds addresses to all stacks
+   */
 
     private void addToStacks(int address) {
         FIFO_STACK.add((Integer) address);
@@ -430,8 +433,8 @@ public class RAM {
     }
 
     /*
-     * updates LRU with the most recentrly used page
-     */
+        updates LRU with the most recentrly used page
+    */
 
     private void LRU(int address) {
         LRU_STACK.remove((Integer) address);
@@ -440,30 +443,38 @@ public class RAM {
 
     /*
         returns number of Free Pages
-    */
+   */
     public int get_NUMBER_OF_PAGES() {
         return this.NUMBER_OF_PAGES;
     }
 
     /*
         returns number of PAGE FAULTS
-    */
+   */
 
     public int get_PAGE_FAULTS() {
         return this.PAGE_FAULTS;
     }
 
+    /*
+        returns a List of all DeadProcesses
+   */
+
     public List<Process> getDeadProcesses(){
         return this.DEAD_PROCESS_LIST;
     }
+
+    /*
+        cleands Dead Processes List
+   */
 
     public void deleteProcesses(){
         DEAD_PROCESS_LIST.clear();
     }
 
     /*
-     * Print RAM by pages
-     */
+        Print RAM by pages
+    */
 
     public void print() {
         System.out.printf("RAM:\n");
@@ -477,8 +488,8 @@ public class RAM {
     }
 
     /*
-     * Prints all processes address list
-     */
+        Prints all processes address list
+    */
 
     public void printProcessesAddressList() {
         for (Process x : PROCESS_LIST) {
@@ -487,8 +498,8 @@ public class RAM {
     }
 
     /*
-     * Prints FIFO stack
-     */
+        Prints FIFO stack
+    */
 
     public void printFIFO() {
         System.out.println(FIFO_STACK);
