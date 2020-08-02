@@ -218,6 +218,7 @@ public class Simulation {
         numberOfPageFaults(deadProcesses);
         numberOfSwaps();
         ram.deleteProcesses();
+        swaps = new int[2];
     }
 
     /* 
