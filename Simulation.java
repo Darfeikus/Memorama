@@ -11,6 +11,8 @@ public class Simulation {
     private int[] swaps = new int[2]; // 0 for out y 1 for in
     private boolean running;
 
+    /* Simulation constructor */
+
     Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess,
             double timeOfFreeing, int swapMethod) {
         this.scanner = scanner;
@@ -25,13 +27,17 @@ public class Simulation {
         this.running = true;
     }
 
+    /*
+        Returns a String parsed as an int
+   */
+
     private int parseInt(String s) {
         return Integer.parseInt(s);
     }
 
     /*
-     * Ends Simulation by changing running value
-     */
+        Ends Simulation by changing running value
+    */
 
     private void endSimulation() {
         ram.print();
@@ -41,16 +47,16 @@ public class Simulation {
     }
 
     /*
-     * Prints a comment from the user in console
-     */
+        Prints a comment from the user in console
+    */
 
     public void commentary(String s) {
         System.out.println(s);
     }
 
     /*
-     * Reads the entry from the user, and performs the correspondent assignment
-     */
+        Reads the entry from the user, and performs the correspondent assignment
+    */
 
     private void readEntry(String s) {
         String[] inputs = s.split(" ");
@@ -77,6 +83,10 @@ public class Simulation {
         }
     }
 
+    /*
+        Calls to clean operation in RAM memory for a specific Process
+    */
+
     private void clean(int processId) {
         try {
             swaps[0] += ram.cleanProcess(processId, vram, time);
@@ -86,6 +96,10 @@ public class Simulation {
             System.out.println(e.getMessage());
         }
     }
+
+    /*
+        Calls to addProcess operation in RAM memory for a specific id
+    */
 
     private void createProcess(int processId, int processSize) {
         try {
@@ -97,6 +111,10 @@ public class Simulation {
         }
     }
 
+    /*
+        Calls to access operation in RAM memory for a reading/Modifying an address
+    */
+
     private void accessVirtualAddress(int address, int processId, int readWrite) {
         try {
             int[] operationSwaps = ram.access(address, processId, vram, time, swapMethod, readWrite);
@@ -106,6 +124,10 @@ public class Simulation {
             System.out.println(e.getMessage());
         }
     }
+
+    /*
+        Checks if a command isued by the user has a fvalid syntax
+    */
 
     private boolean checkValidString(String s) {
         String[] inputs = s.split(" ");
@@ -154,6 +176,10 @@ public class Simulation {
         return false;
     }
 
+    /*
+        Starts simulation
+    */
+
     public void startSimulation() {
         String command;
         while (running && scanner.hasNextLine()) {
@@ -166,6 +192,10 @@ public class Simulation {
         }
     }
 
+    /*
+        Checks if a String is a valid integer
+    */
+
     static boolean isInt(String s) {
         try {
             Integer.parseInt(s);
@@ -176,8 +206,8 @@ public class Simulation {
     }
 
     /*
-     * Prints a whole report of the block of processes
-     */
+        Prints a whole report of the block of processes
+    */
     public void report() {
         List<Process> deadProcesses = ram.getDeadProcesses();
         if (deadProcesses.size() == 0) {
@@ -191,8 +221,8 @@ public class Simulation {
     }
 
     /* 
-        
-    */
+        Calculates the average and individual turnaround of all processes in the block
+   */
     private void turnaround(List<Process> deadProcesses) {
         System.out.println("Turnaround Por Proceso: ");
         double sumSeconds = 0;
@@ -210,6 +240,10 @@ public class Simulation {
 
     }
 
+    /*
+        displays the average turnaround
+    */
+
     private void average(int size, double sumSeconds) {
         double average = sumSeconds / size;
         Time timeTemp = new Time();
@@ -219,12 +253,20 @@ public class Simulation {
         timeTemp.print();
     }
 
+    /*
+        Displays the number of pagefault in a block
+    */
+
     private void numberOfPageFaults(List<Process> deadProcesses) {
         System.out.println("Page Faults");
         for (Process process : deadProcesses) {
             System.out.println("\tProceso " + process.getId() + ": " + process.getPageFaults());
         }
     }
+    
+    /*
+        Displays number of swaps in a block
+    */
 
     private void numberOfSwaps() {
         System.out.println("Swap out: " + swaps[0]);
