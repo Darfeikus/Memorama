@@ -11,6 +11,7 @@ public class RAM {
 
     private double timeOfSwap;
     private double timeOfAccess;
+    private double timeOfFreeing;
 
     private int[] RAM;
     private int FREE_PAGES;
@@ -20,10 +21,11 @@ public class RAM {
     private List<Integer> IDS = new ArrayList<Integer>();
 
     private List<Process> PROCESS_LIST = new ArrayList<Process>();
+    private List<Process> DEAD_PROCESS_LIST = new ArrayList<Process>();
 
     /* Constructor of class RAM */
 
-    public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess) throws Exception {
+    public RAM(int size, int PAGE_SIZE, double timeOfSwap, double timeOfAccess, double timeOfFreeing) throws Exception {
 
         boolean powersOfTwo = size > 0 && ((size & (size - 1))) == 0 && PAGE_SIZE > 0
                 && ((PAGE_SIZE & (PAGE_SIZE - 1))) == 0;
@@ -43,6 +45,7 @@ public class RAM {
         this.RAM = new int[size];
         this.timeOfSwap = timeOfSwap;
         this.timeOfAccess = timeOfAccess;
+        this.timeOfFreeing = timeOfFreeing;
 
         Arrays.fill(RAM, -1);
     }
@@ -52,7 +55,7 @@ public class RAM {
      */
 
     public int[] addProcess(int processId, int size, VRAM vram, Time time, int method) throws Exception {
-
+        Time temp = new Time(time);
         List<int[]> addresses = new ArrayList<>();
         int[] swaps = new int[2];
         int page = 0;
@@ -94,7 +97,7 @@ public class RAM {
 
                 // Add page index to list
 
-                addresses.add(new int[] { 0, i, page });
+                addresses.add(new int[] { 0, i, page, 0});
                 page += PAGE_SIZE;
 
                 // Add page index to FIFO_STACK and LRU
@@ -109,7 +112,7 @@ public class RAM {
                 swaps[1]++;
             }
         }
-        Process newProcess = new Process(processId, size, time, addresses);
+        Process newProcess = new Process(processId, size, temp, addresses);
         PROCESS_LIST.add(newProcess);
         return swaps;
     }
@@ -168,7 +171,7 @@ public class RAM {
     public int cleanProcess(int processId, VRAM vram, Time time) throws Exception {
         int swaps = 0;
         Process process = getProcess(processId);
-
+        
         if (process == null) {
             throw new Exception("Process not found in memory");
         }
@@ -181,7 +184,12 @@ public class RAM {
 
         vram.removeProcessFromMemory(processId);
         removeProcessFromMemory(processId);
-        time.addSeconds(timeOfSwap * swaps);
+
+        DEAD_PROCESS_LIST.add(process);
+        PROCESS_LIST.remove(process);
+        IDS.remove((Integer)processId);
+
+        time.addSeconds(timeOfFreeing * swaps);
         process.endProcess(time);
         return swaps;
     }
@@ -194,6 +202,7 @@ public class RAM {
         boolean foundIt = false;
         for (int i = 0; i < SIZE; i += PAGE_SIZE) {
             if (RAM[i] == id) {
+                removeFromStacks(id);
                 for (int j = i; j < i + PAGE_SIZE; j++)
                     RAM[j] = -1;
                 foundIt = true;
@@ -237,13 +246,13 @@ public class RAM {
         return -1;
     }
 
-    public int[] access(int address, int processId, VRAM vram, Time time, int method) throws Exception {
+    public int[] access(int address, int processId, VRAM vram, Time time, int method, int accessRead) throws Exception {
         time.addSeconds(timeOfAccess);
         
         Process process = getProcess(processId);
         System.out.printf("Obtaining real address from virtual address %d of process %d\n",address,processId);
 
-        if(method == 1){
+        if(accessRead == 1){
             System.out.println("and modifying");
         }
         
@@ -265,14 +274,16 @@ public class RAM {
                 found = true;
                 //Si esta en memoria RAM
                 if(x[0] == 0){
-                    if(method==1){
+                    if(accessRead==1){
                         System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
+                        x[3] = 1;
                     }
                     System.out.printf("Virtual address: %d RAM address: %d\n",address,x[1]+address%PAGE_SIZE);
                     LRU(x[1]);
                 }
                 else{
                     PAGE_FAULTS++;
+                    process.addPage_Fault(1);
                     int vramAddress = x[1];
                     int index;
                     //Remove page from VRAM and get the size of the page
@@ -283,8 +294,9 @@ public class RAM {
                         newIndexRam = allocatePage(processId, sizeOfPageVRAM);
                         updateList(processId, vramAddress, newIndexRam);
                         System.out.printf("Page %d of process %d was localized in frame %d of VRAM\nit has been changed to frame %d in RAM\n", address, processId, vramAddress/PAGE_SIZE, newIndexRam/PAGE_SIZE);
-                        if(method==1){
+                        if(accessRead==1){
                             System.out.printf("Frame %d of process %d modified\n",address/PAGE_SIZE,processId);
+                            x[3] = 1;
                         }
                         System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam);
                         //Swap In
@@ -300,8 +312,6 @@ public class RAM {
                     else{
                         index = FIFOStack(1)[0];
                     }
-
-                    removeFromStacks(index);
                     
                     int movedProcessId = RAM[index];
                     int sizeOfPageRAM = removePageFromMemory(index);
@@ -309,7 +319,7 @@ public class RAM {
                     //swap out
                     
                     time.addSeconds(timeOfSwap);
-                    swaps[0]++;
+                    // swaps[0]++;
                     int newIndexVram = vram.addProcess(movedProcessId, sizeOfPageRAM);
                     updateList(movedProcessId, index, newIndexVram);
                     //swap in
@@ -441,6 +451,14 @@ public class RAM {
 
     public int get_PAGE_FAULTS() {
         return this.PAGE_FAULTS;
+    }
+
+    public List<Process> getDeadProcesses(){
+        return this.DEAD_PROCESS_LIST;
+    }
+
+    public void deleteProcesses(){
+        DEAD_PROCESS_LIST.clear();
     }
 
     /*

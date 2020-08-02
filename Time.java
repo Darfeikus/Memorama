@@ -14,6 +14,13 @@ public class Time {
 		this.miliseconds = 0;
 	}
 
+	public Time(Time s) {
+		this.hours = s.getHours();
+		this.minutes = s.getMinutes();
+		this.seconds = s.getSeconds();
+		this.miliseconds = s.getMiliseconds();
+	}
+
 	void addSeconds(int sec) {
 		seconds += sec;
 		simplifyTime();
@@ -21,8 +28,8 @@ public class Time {
 
 	// Overwriting for different argument type
 	void addSeconds(double sec) {
-		this.miliseconds += (sec % 1) * 1000;
-		this.seconds += sec - (sec % 1);
+		this.seconds += (int)sec;
+		this.miliseconds += sec*1000-((int)sec*1000);
 		simplifyTime();
 	}
 
@@ -38,10 +45,22 @@ public class Time {
 
 	static Time substractTimes(Time minuend, Time subtrahend) {
 		Time difference = new Time();
-		difference.hours = minuend.hours - subtrahend.hours;
-		difference.minutes = minuend.minutes - subtrahend.minutes;
+		difference.miliseconds = minuend.miliseconds - subtrahend.miliseconds;		
+		if(difference.miliseconds < 0){
+			difference.miliseconds = 1+difference.miliseconds;
+			difference.seconds--;
+		}
 		difference.seconds = minuend.seconds - subtrahend.seconds;
-		difference.miliseconds = minuend.miliseconds - subtrahend.miliseconds;
+		if(difference.seconds < 0){
+			difference.seconds = 1+difference.seconds;
+			difference.minutes--;
+		}
+		difference.minutes = minuend.minutes - subtrahend.minutes;
+		if(difference.minutes < 0){
+			difference.minutes = 1+difference.minutes;
+			difference.hours--;
+		}
+		difference.hours = minuend.hours - subtrahend.hours;
 		difference.simplifyTime();
 		return difference;
 	}

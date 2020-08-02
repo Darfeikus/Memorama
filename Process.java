@@ -3,7 +3,7 @@
 
 import java.util.*;
 
-public class Process {
+public class Process{
     private int id; // unique id for process
     private int size;
     private List<int[]> pageList = new ArrayList<>(); // list of int array of size 2, [0] 0 is RAM, 1 is VRAM, [1] is
@@ -12,6 +12,7 @@ public class Process {
     private Time endTime;
     private Time turnaround;
     private boolean active;
+    private int PAGE_FAULTS;
 
     /*
         Constructor of class Process
@@ -20,7 +21,7 @@ public class Process {
     public Process(int id, int size, Time startTime, List<int[]> pageList) {
         this.id = id;
         this.size = size;
-        this.startTime = startTime;
+        this.startTime = new Time(startTime);
         this.pageList = pageList;
         this.active = true;
     }
@@ -42,6 +43,10 @@ public class Process {
         }
     }
 
+    public void addPage_Fault(int i){
+        PAGE_FAULTS+=i;
+    }
+
     /*
         search for the index of specific address
     */
@@ -60,7 +65,7 @@ public class Process {
     */
 
     public void endProcess(Time endTime) {
-        this.endTime = endTime;
+        this.endTime = new Time(endTime);
         this.turnaround = Time.substractTimes(endTime, startTime);
         this.active = false;
     }
@@ -105,15 +110,50 @@ public class Process {
         return this.active;
     }
 
+     /*
+        returns number of page faults
+    */
+
+    public int getPageFaults(){
+        return this.PAGE_FAULTS;
+    }
+
     /*
         Print the addresses of the process
     */
 
     public void printAddresses(){
-        System.out.printf("\nProcess %d address list\n",id);
+        System.out.printf("Process %d address list\n",id);
+        
+        List<Integer> real = new ArrayList<Integer>();
+        List<Integer> virtual = new ArrayList<Integer>();
+
         for(int[]x : pageList){
-            System.out.printf("[%d][%d][%d]\n",x[0],x[1],x[2]);
+            if(x[0] == 0){
+                real.add((Integer)x[1]);
+            }
+            else{
+                virtual.add((Integer)x[1]);
+            }
         }
-        System.out.println();
+
+        System.out.printf("Frames in RAM memory: [");
+        for (int i = 0; i<real.size();i++) {
+            if(i!=real.size()-1)
+                System.out.printf("%d,", real.get(i));
+            else
+                System.out.printf("%d", real.get(i));
+        }
+        System.out.println("]");
+        
+        System.out.printf("Frames in VRAM memory: [");
+        for (int i = 0; i<virtual.size();i++) {
+            if(i!=virtual.size()-1)
+                System.out.printf("%d,", virtual.get(i));
+            else
+                System.out.printf("%d", virtual.get(i));
+        }
+        System.out.println("]");
     }
+
 }
