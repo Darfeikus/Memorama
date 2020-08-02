@@ -188,7 +188,7 @@ public class RAM {
         PROCESS_LIST.remove(process);
         IDS.remove((Integer)processId);
 
-        time.addSeconds(timeOfFreeing   swaps);
+        time.addSeconds(timeOfFreeing*swaps);
         process.endProcess(time);
         return swaps;
     }
