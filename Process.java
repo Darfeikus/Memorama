@@ -126,36 +126,39 @@ public class Process {
      */
 
     public void printAddresses() {
-        System.out.printf("Process %d address list\n", id);
 
-        List<Integer> real = new ArrayList<Integer>();
-        List<Integer> virtual = new ArrayList<Integer>();
+        List<int[]> real = new ArrayList<int[]>();
+        List<int[]> virtual = new ArrayList<int[]>();
 
         for (int[] x : pageList) {
             if (x[0] == 0) {
-                real.add((Integer) x[1]);
+                real.add(x);
             } else {
-                virtual.add((Integer) x[1]);
+                virtual.add(x);
             }
         }
 
         if(real.size()>0){
-            System.out.printf("Frames in RAM memory: [");
+            System.out.printf("\tFrames in RAM memory: \n\t[");
             for (int i = 0; i < real.size(); i++) {
-                if (i != real.size() - 1)
-                    System.out.printf("%d,", real.get(i));
-                else
-                    System.out.printf("%d", real.get(i));
+                if (i != real.size() - 1){
+                    
+                    System.out.printf("%d%s,", real.get(i)[1], real.get(i)[3] == 1 ? " modified":"");
+                }
+                else{
+                    
+                    System.out.printf("%d%s", real.get(i)[1], real.get(i)[3] == 1 ? " modified":"");
+                }
             }
+            System.out.println("]");
         }
-        System.out.println("]");
         if(virtual.size()>0){
-            System.out.printf("Frames in VRAM memory: [");
+            System.out.printf("\tFrames in VRAM memory: \n\t[");
             for (int i = 0; i < virtual.size(); i++) {
                 if (i != virtual.size() - 1)
-                    System.out.printf("%d,", virtual.get(i));
+                    System.out.printf("%d%s,", virtual.get(i)[1], virtual.get(i)[3] == 1 ? " modified":"");
                 else
-                    System.out.printf("%d", virtual.get(i));
+                    System.out.printf("%d%s", virtual.get(i)[1], virtual.get(i)[3] == 1 ? " modified":"");
             }
             System.out.println("]");
         }

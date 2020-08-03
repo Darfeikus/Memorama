@@ -191,7 +191,6 @@ public class RAM {
         DEAD_PROCESS_LIST.add(process);
         PROCESS_LIST.remove(process);
         IDS.remove((Integer)processId);
-
         time.addSeconds(timeOfFreeing*swaps);
         process.endProcess(time);
         return swaps;
@@ -205,7 +204,7 @@ public class RAM {
         boolean foundIt = false;
         for (int i = 0; i < SIZE; i += PAGE_SIZE) {
             if (RAM[i] == id) {
-                removeFromStacks(id);
+                removeFromStacks(i);
                 for (int j = i; j < i + PAGE_SIZE; j++)
                     RAM[j] = -1;
                 foundIt = true;
@@ -298,6 +297,7 @@ public class RAM {
                     int sizeOfPageVRAM = vram.movePageToRam(vramAddress);
                     int newIndexRam;
                     
+                    //if there is available space, then store it
                     if(FREE_PAGES>0){
                         newIndexRam = allocatePage(processId, sizeOfPageVRAM);
                         updateList(processId, vramAddress, newIndexRam);
@@ -314,6 +314,8 @@ public class RAM {
                         return swaps;
                     }
                     
+                    //Select which page is going to be replaced
+
                     if(method == 1){
                         index = LRUStack(1)[0];
                     }
@@ -328,11 +330,13 @@ public class RAM {
                     
                     time.addSeconds(timeOfSwap);
                     int newIndexVram = vram.addProcess(movedProcessId, sizeOfPageRAM);
+                    //Update the process moved to VRAM with its new index
                     updateList(movedProcessId, index, newIndexVram);
                     //swap in
                     time.addSeconds(timeOfSwap);
                     swaps[1]++;
                     newIndexRam = allocatePage(processId, sizeOfPageVRAM);
+                    //Update the process moved to RAM with its new index
                     updateList(processId, vramAddress, newIndexRam);
                     
                     System.out.printf("Frame %d of process %d swapped to frame %d of VRAM\n", index, movedProcessId, newIndexVram/PAGE_SIZE);
@@ -342,6 +346,7 @@ public class RAM {
                     }
                     System.out.printf("Virtual address: %d RAM address: %d\n",address,newIndexRam+address%PAGE_SIZE);
                     addToStacks(newIndexRam);
+                    return swaps;
                 }
             }
         }
@@ -349,7 +354,6 @@ public class RAM {
         if(!found){
             throw new Exception("Virtual Address not found");
         }
-
         return swaps;
     }
 

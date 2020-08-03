@@ -45,23 +45,26 @@ public class Time {
 
 	static Time substractTimes(Time minuend, Time subtrahend) {
 		Time difference = new Time();
+		minuend.print();
+		subtrahend.print();
 		difference.miliseconds = minuend.miliseconds - subtrahend.miliseconds;		
 		if(difference.miliseconds < 0){
-			difference.miliseconds = 1+difference.miliseconds;
+			difference.miliseconds = 1000+difference.miliseconds;
 			difference.seconds--;
 		}
 		difference.seconds = minuend.seconds - subtrahend.seconds;
 		if(difference.seconds < 0){
-			difference.seconds = 1+difference.seconds;
+			difference.seconds = 60+difference.seconds;
 			difference.minutes--;
 		}
 		difference.minutes = minuend.minutes - subtrahend.minutes;
 		if(difference.minutes < 0){
-			difference.minutes = 1+difference.minutes;
+			difference.minutes = 60+difference.minutes;
 			difference.hours--;
 		}
 		difference.hours = minuend.hours - subtrahend.hours;
 		difference.simplifyTime();
+		difference.print();
 		return difference;
 	}
 
