@@ -1,4 +1,4 @@
-C comenzamos…
+C comenzamos...
 P 2048 1
 A 1 1 0
 A 33 1 1

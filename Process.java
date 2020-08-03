@@ -3,20 +3,20 @@
 
 import java.util.*;
 
-public class Process{
+public class Process {
     private int id; // unique id for process
-    private int size;
+    private int size; // Size in bytes for a process
     private List<int[]> pageList = new ArrayList<>(); // list of int array of size 2, [0] 0 is RAM, 1 is VRAM, [1] is
                                                       // address.
-    private Time startTime;
+    private Time startTime; // Time the process was created
     private Time endTime;
     private Time turnaround;
     private boolean active;
     private int PAGE_FAULTS;
 
     /*
-        Constructor of class Process
-    */
+     * Constructor of class Process
+     */
 
     public Process(int id, int size, Time startTime, List<int[]> pageList) {
         this.id = id;
@@ -27,32 +27,35 @@ public class Process{
     }
 
     /*
-        Called by RAM, moves processes from RAM to VRAM, and vice versa
-    */
+     * Called by RAM, moves processes from RAM to VRAM, and vice versa
+     */
 
     public void changeProcess(int oldAddress, int newAddress) {
         int i = searchPageWithAddress(oldAddress);
-        
-        if (pageList.get(i)[0] == 0){
-            pageList.get(i)[0] = 1;
-            pageList.get(i)[1] = newAddress;
-        }
-        else{
-            pageList.get(i)[0] = 0;
-            pageList.get(i)[1] = newAddress;
-        }
-    }
 
-    public void addPage_Fault(int i){
-        PAGE_FAULTS+=i;
+        if (pageList.get(i)[0] == 0) { // Moves from RAM to VRAM
+            pageList.get(i)[0] = 1;
+            pageList.get(i)[1] = newAddress; // Assigns new Address in VRAM
+        } else {
+            pageList.get(i)[0] = 0; // Moves from VRAM to RAM
+            pageList.get(i)[1] = newAddress; // Assigns new Address in RAM
+        }
     }
 
     /*
-        search for the index of specific address
-    */
+     * Adds i page faults to this instance of Process. Called from RAM
+     */
 
-    private int searchPageWithAddress(int address){
-        for(int i = 0; i < pageList.size(); i++){
+    public void addPage_Fault(int i) {
+        PAGE_FAULTS += i;
+    }
+
+    /*
+     * search for the index of specific address
+     */
+
+    private int searchPageWithAddress(int address) {
+        for (int i = 0; i < pageList.size(); i++) {
             if (pageList.get(i)[1] == address) {
                 return i;
             }
@@ -61,8 +64,8 @@ public class Process{
     }
 
     /*
-        ends process and calculates turnaround time
-    */
+     * ends process and calculates turnaround time
+     */
 
     public void endProcess(Time endTime) {
         this.endTime = new Time(endTime);
@@ -71,89 +74,91 @@ public class Process{
     }
 
     /*
-        returns Id of the process
-    */
+     * returns Id of the process
+     */
 
-    public int getId(){
+    public int getId() {
         return this.id;
     }
 
     /*
-        returns size of the process
-    */
+     * returns size of the process
+     */
 
-    public int getSize(){
+    public int getSize() {
         return this.size;
     }
 
     /*
-        returns turnaround time;
-    */
+     * returns turnaround time;
+     */
 
-    public Time getTurnaround(){
+    public Time getTurnaround() {
         return this.turnaround;
     }
 
     /*
-        returns pageList
-    */
+     * returns pageList
+     */
 
-    public List<int[]> getPageList(){
+    public List<int[]> getPageList() {
         return this.pageList;
     }
 
     /*
-        returns active status
-    */
+     * returns active status
+     */
 
-    public boolean getStatus(){
+    public boolean getStatus() {
         return this.active;
     }
 
-     /*
-        returns number of page faults
-    */
+    /*
+     * returns number of page faults
+     */
 
-    public int getPageFaults(){
+    public int getPageFaults() {
         return this.PAGE_FAULTS;
     }
 
     /*
-        Print the addresses of the process
-    */
+     * Print the addresses of the process
+     */
 
-    public void printAddresses(){
-        System.out.printf("Process %d address list\n",id);
-        
+    public void printAddresses() {
+        System.out.printf("Process %d address list\n", id);
+
         List<Integer> real = new ArrayList<Integer>();
         List<Integer> virtual = new ArrayList<Integer>();
 
-        for(int[]x : pageList){
-            if(x[0] == 0){
-                real.add((Integer)x[1]);
-            }
-            else{
-                virtual.add((Integer)x[1]);
+        for (int[] x : pageList) {
+            if (x[0] == 0) {
+                real.add((Integer) x[1]);
+            } else {
+                virtual.add((Integer) x[1]);
             }
         }
 
-        System.out.printf("Frames in RAM memory: [");
-        for (int i = 0; i<real.size();i++) {
-            if(i!=real.size()-1)
-                System.out.printf("%d,", real.get(i));
-            else
-                System.out.printf("%d", real.get(i));
+        if(real.size()>0){
+            System.out.printf("Frames in RAM memory: [");
+            for (int i = 0; i < real.size(); i++) {
+                if (i != real.size() - 1)
+                    System.out.printf("%d,", real.get(i));
+                else
+                    System.out.printf("%d", real.get(i));
+            }
         }
         System.out.println("]");
-        
-        System.out.printf("Frames in VRAM memory: [");
-        for (int i = 0; i<virtual.size();i++) {
-            if(i!=virtual.size()-1)
-                System.out.printf("%d,", virtual.get(i));
-            else
-                System.out.printf("%d", virtual.get(i));
+        if(virtual.size()>0){
+            System.out.printf("Frames in VRAM memory: [");
+            for (int i = 0; i < virtual.size(); i++) {
+                if (i != virtual.size() - 1)
+                    System.out.printf("%d,", virtual.get(i));
+                else
+                    System.out.printf("%d", virtual.get(i));
+            }
+            System.out.println("]");
         }
-        System.out.println("]");
     }
 
 }
