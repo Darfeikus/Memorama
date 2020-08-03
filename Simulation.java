@@ -57,7 +57,8 @@ public class Simulation {
     */
 
     private void readEntry(String s) {
-        String[] inputs = s.split(" ");
+        String[] inputs = s.split("\\s");
+        inputs = s.trim().split("\\s+");
         System.out.println(s);
         switch (inputs[0]) {
             case "A":
@@ -129,7 +130,8 @@ public class Simulation {
     */
 
     private boolean checkValidString(String s) {
-        String[] inputs = s.split(" ");
+        String[] inputs = s.split("\\s");
+        inputs = s.trim().split("\\s+");
         switch (inputs[0]) {
             case "A":
                 if (inputs.length == 4) { // Check size first to avoid outOfRangeException
@@ -146,12 +148,12 @@ public class Simulation {
                 else
                     return false;
             case "E":
-                if (s.equals("E"))
+                if (inputs[0].equals("E"))
                     return true;
                 else
                     return false;
             case "F":
-                if (s.equals("F"))
+                if (inputs[0].equals("F"))
                     return true;
                 else
                     return false;

@@ -147,8 +147,8 @@ public class Process {
                 else
                     System.out.printf("%d", real.get(i));
             }
+            System.out.println("]");
         }
-        System.out.println("]");
         if(virtual.size()>0){
             System.out.printf("Frames in VRAM memory: [");
             for (int i = 0; i < virtual.size(); i++) {
