@@ -81,6 +81,7 @@ public class RAM {
 
         if (FREE_PAGES < amountOfPagesToFill) {
             freeSpace(amountOfPagesToFill - FREE_PAGES, vram, time, swaps, method);
+            System.out.println("Swaps made:");
         }
 
         // Fill RAM
@@ -112,6 +113,9 @@ public class RAM {
             }
         }
         Process newProcess = new Process(processId, size, temp, addresses);
+        
+        System.out.printf("Frames assigned to process %d:\n", processId);
+        newProcess.printAddresses();
         PROCESS_LIST.add(newProcess);
         return swaps;
     }
@@ -148,7 +152,7 @@ public class RAM {
             
             int address = vram.addProcess(currentId, sizeOfProcess);
             
-            System.out.printf("Frame %d of process %d swapped to frame %d of VRAM\n", indexes[i],currentId, address/PAGE_SIZE);
+            System.out.printf("Frame %d in RAM with process %d swapped to frame %d of VRAM\n", indexes[i],currentId, address/PAGE_SIZE);
 
             updateList(currentId, indexes[i], address);
 

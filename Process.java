@@ -139,23 +139,26 @@ public class Process {
             }
         }
 
-        System.out.printf("Frames in RAM memory: [");
-        for (int i = 0; i < real.size(); i++) {
-            if (i != real.size() - 1)
-                System.out.printf("%d,", real.get(i));
-            else
-                System.out.printf("%d", real.get(i));
+        if(real.size()>0){
+            System.out.printf("Frames in RAM memory: [");
+            for (int i = 0; i < real.size(); i++) {
+                if (i != real.size() - 1)
+                    System.out.printf("%d,", real.get(i));
+                else
+                    System.out.printf("%d", real.get(i));
+            }
         }
         System.out.println("]");
-
-        System.out.printf("Frames in VRAM memory: [");
-        for (int i = 0; i < virtual.size(); i++) {
-            if (i != virtual.size() - 1)
-                System.out.printf("%d,", virtual.get(i));
-            else
-                System.out.printf("%d", virtual.get(i));
+        if(virtual.size()>0){
+            System.out.printf("Frames in VRAM memory: [");
+            for (int i = 0; i < virtual.size(); i++) {
+                if (i != virtual.size() - 1)
+                    System.out.printf("%d,", virtual.get(i));
+                else
+                    System.out.printf("%d", virtual.get(i));
+            }
+            System.out.println("]");
         }
-        System.out.println("]");
     }
 
 }

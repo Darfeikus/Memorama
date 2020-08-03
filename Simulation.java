@@ -89,6 +89,7 @@ public class Simulation {
         try {
             swaps[0] += ram.cleanProcess(processId, vram, time);
             Process temp = ram.getDeadProcesses().get(ram.getDeadProcesses().size() - 1);
+            System.out.println("Frames set free ");
             temp.printAddresses();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -101,7 +102,7 @@ public class Simulation {
 
     private void createProcess(int processId, int processSize) {
         try {
-            int[] operationSwaps = ram.addProcess(processId, processSize, vram, time, 0);
+            int[] operationSwaps = ram.addProcess(processId, processSize, vram, time, swapMethod);
             swaps[0] += operationSwaps[0];
             swaps[1] += operationSwaps[1];
         } catch (Exception e) {
