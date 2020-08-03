@@ -6,7 +6,6 @@ public class Simulation {
     private RAM ram;
     private VRAM vram;
     private int swapMethod;
-    private List<Block> blockList = new ArrayList<>();
     // Log log = new Log();
     private int[] swaps = new int[2]; // 0 for out y 1 for in
     private boolean running;
@@ -14,14 +13,10 @@ public class Simulation {
     /* Simulation constructor */
 
     Simulation(Scanner scanner, int PAGE_SIZE, int RAM_SIZE, int VRAM_SIZE, double timeOfSwap, double timeOfAccess,
-            double timeOfFreeing, int swapMethod) {
+            double timeOfFreeing, int swapMethod) throws Exception {
         this.scanner = scanner;
-        try {
-            this.ram = new RAM(RAM_SIZE, PAGE_SIZE, timeOfSwap, timeOfAccess, timeOfFreeing);
-            this.vram = new VRAM(VRAM_SIZE, PAGE_SIZE);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        this.ram = new RAM(RAM_SIZE, PAGE_SIZE, timeOfSwap, timeOfAccess, timeOfFreeing);
+        this.vram = new VRAM(VRAM_SIZE, PAGE_SIZE);
         this.swapMethod = swapMethod;
         this.time = new Time();
         this.running = true;
@@ -64,8 +59,7 @@ public class Simulation {
             case "A":
                 accessVirtualAddress(parseInt(inputs[1]), parseInt(inputs[2]), parseInt(inputs[3]));
                 break;
-            case "C":
-                commentary(s.substring(2));
+            case "C":;
                 break;
             case "E":
                 endSimulation();
@@ -90,7 +84,7 @@ public class Simulation {
         try {
             swaps[0] += ram.cleanProcess(processId, vram, time);
             Process temp = ram.getDeadProcesses().get(ram.getDeadProcesses().size() - 1);
-            System.out.println("Frames set free ");
+            System.out.println("Frames set free: ");
             temp.printAddresses();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -143,20 +137,14 @@ public class Simulation {
                 } else
                     return false;
             case "C":
-                if (s.length() > 3)
+                if (s.length() > 2)
                     return true;
                 else
                     return false;
             case "E":
-                if (inputs[0].equals("E"))
-                    return true;
-                else
-                    return false;
+                return true;
             case "F":
-                if (inputs[0].equals("F"))
-                    return true;
-                else
-                    return false;
+                return true;
             case "L":
                 if (inputs.length == 2) {
                     if (isInt(inputs[1]))
@@ -173,8 +161,9 @@ public class Simulation {
                         return false;
                 } else
                     return false;
+            default:
+                return false;
         }
-        return false;
     }
 
     /*
