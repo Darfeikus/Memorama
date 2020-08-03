@@ -40,8 +40,6 @@ public class Simulation {
     */
 
     private void endSimulation() {
-        ram.print();
-        vram.print();
         System.out.println("GAMER OVER");
         this.running = false;
     }
