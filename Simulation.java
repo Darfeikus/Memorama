@@ -6,7 +6,6 @@ public class Simulation {
     private RAM ram;
     private VRAM vram;
     private int swapMethod;
-    // Log log = new Log();
     private int[] swaps = new int[2]; // 0 for out y 1 for in
     private boolean running;
 
