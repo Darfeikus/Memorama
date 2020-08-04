@@ -45,8 +45,6 @@ public class Time {
 
 	static Time substractTimes(Time minuend, Time subtrahend) {
 		Time difference = new Time();
-		minuend.print();
-		subtrahend.print();
 		difference.miliseconds = minuend.miliseconds - subtrahend.miliseconds;		
 		if(difference.miliseconds < 0){
 			difference.miliseconds = 1000+difference.miliseconds;
@@ -64,7 +62,6 @@ public class Time {
 		}
 		difference.hours = minuend.hours - subtrahend.hours;
 		difference.simplifyTime();
-		difference.print();
 		return difference;
 	}
 
